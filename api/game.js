@@ -54,8 +54,16 @@ function verifyPayload(token) {
   }
 }
 
+// AQUÍ ESTÁ LA CORRECCIÓN MÁGICA
 function getIP(req) {
-  return req.headers['x-forwarded-for']?.split(',')?.trim() || req.headers['x-real-ip'] || req.socket?.remoteAddress || 'desconocido';
+  try {
+    let ip = req.headers['x-forwarded-for'];
+    if (Array.isArray(ip)) return ip.trim();
+    if (typeof ip === 'string') return ip.split(',').trim();
+    return req.headers['x-real-ip'] || req.socket?.remoteAddress || 'desconocido';
+  } catch (e) {
+    return 'desconocido';
+  }
 }
 
 // ─── Main Handler (AHORA ES ASÍNCRONO PARA LA BASE DE DATOS) ─────
