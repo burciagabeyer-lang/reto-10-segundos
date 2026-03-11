@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Reto 10 Segundos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #09090b;
@@ -20,137 +20,162 @@
             --green: #22c55e;
             --green-dim: rgba(34,197,94,0.08);
             --red: #ef4444;
-            --red-dim: rgba(239,68,68,0.08);
             --ring-base: #27272a;
             --mono: 'IBM Plex Mono', monospace;
             --body: 'Sora', sans-serif;
         }
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: var(--body);
-            min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
+        *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+        body { background:var(--bg); color:var(--text); font-family:var(--body); min-height:100vh; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
 
-        .scr { display: none; min-height: 100vh; padding: 24px 20px 100px; flex-direction: column; align-items: center; justify-content: center; }
-        .scr.on { display: flex; }
+        .scr { display:none; min-height:100vh; padding:24px 20px 100px; flex-direction:column; align-items:center; justify-content:center; }
+        .scr.on { display:flex; }
 
         /* Calibration */
-        #calScr .container { text-align: center; }
-        #calScr h2 { font-weight: 300; font-size: 1.1rem; letter-spacing: 0.08em; color: var(--text-2); animation: fadeUp .6s ease; }
-        #calDet { color: var(--text-3); font-size: .85rem; margin-top: 12px; }
-        .cal-dots { display: flex; gap: 6px; justify-content: center; margin-top: 20px; }
-        .cal-dots span { width: 4px; height: 4px; background: var(--text-3); border-radius: 50%; animation: calP 1.2s ease infinite; }
-        .cal-dots span:nth-child(2) { animation-delay: .2s; }
-        .cal-dots span:nth-child(3) { animation-delay: .4s; }
-        @keyframes calP { 0%,100%{opacity:.3} 50%{opacity:1} }
+        #calScr .container { text-align:center; }
+        #calScr h2 { font-weight:300; font-size:1.1rem; letter-spacing:.08em; color:var(--text-2); animation:fadeUp .6s ease; }
+        #calDet { color:var(--text-3); font-size:.85rem; margin-top:12px; }
+        .cal-dots { display:flex; gap:6px; justify-content:center; margin-top:20px; }
+        .cal-dots span { width:4px; height:4px; background:var(--text-3); border-radius:50%; animation:calP 1.2s ease infinite; }
+        .cal-dots span:nth-child(2){animation-delay:.2s} .cal-dots span:nth-child(3){animation-delay:.4s}
+        @keyframes calP{0%,100%{opacity:.3}50%{opacity:1}}
 
-        .container { width: 100%; max-width: 420px; text-align: center; }
+        .container { width:100%; max-width:420px; text-align:center; }
 
-        /* Prize badge */
-        .prize {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.2);
-            border-radius: 100px; padding: 8px 20px; margin-bottom: 32px;
-            animation: fadeUp .5s ease;
-        }
-        .prize-dot { width: 6px; height: 6px; background: var(--amber); border-radius: 50%; animation: pdot 2s ease infinite; }
-        @keyframes pdot { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(245,158,11,.4)} 50%{opacity:.7;box-shadow:0 0 0 6px rgba(245,158,11,0)} }
-        .prize-text { font-size: .8rem; font-weight: 600; color: var(--amber); letter-spacing: .04em; }
+        /* Prize */
+        .prize { display:inline-flex; align-items:center; gap:8px; background:var(--amber-dim); border:1px solid rgba(245,158,11,.2); border-radius:100px; padding:8px 20px; margin-bottom:32px; animation:fadeUp .5s ease; }
+        .prize-dot { width:6px; height:6px; background:var(--amber); border-radius:50%; animation:pdot 2s ease infinite; }
+        @keyframes pdot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(245,158,11,.4)}50%{opacity:.7;box-shadow:0 0 0 6px rgba(245,158,11,0)}}
+        .prize-text { font-size:.8rem; font-weight:600; color:var(--amber); letter-spacing:.04em; }
 
-        .objective { color: var(--text-3); font-size: .8rem; font-weight: 400; letter-spacing: .06em; margin-bottom: 8px; animation: fadeUp .5s ease .1s both; }
-        .objective b { color: var(--text-2); font-weight: 500; }
+        .objective { color:var(--text-3); font-size:.8rem; font-weight:400; letter-spacing:.06em; margin-bottom:8px; animation:fadeUp .5s ease .1s both; }
+        .objective b { color:var(--text-2); font-weight:600; }
 
         /* Ring */
-        .ring-wrap { position: relative; width: 280px; height: 280px; margin: 24px auto; animation: fadeUp .6s ease .15s both; }
-        .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-        .ring-bg { fill: none; stroke: var(--ring-base); stroke-width: 2; }
-        .ring-fill { fill: none; stroke: var(--text-3); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 816; stroke-dashoffset: 816; transition: stroke .3s ease; }
-        .ring-fill.near { stroke: var(--amber); }
-        .ring-fill.over { stroke: var(--red); }
-        .ring-fill.win { stroke: var(--green); }
-        .ring-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .ring-wrap { position:relative; width:280px; height:280px; margin:24px auto; animation:fadeUp .6s ease .15s both; }
+        .ring-svg { width:100%; height:100%; transform:rotate(-90deg); }
+        .ring-bg { fill:none; stroke:var(--ring-base); stroke-width:2; }
+        .ring-fill {
+            fill:none; stroke:var(--text-3); stroke-width:3; stroke-linecap:round;
+            stroke-dasharray:816; stroke-dashoffset:816;
+            transition: stroke .4s ease;
+        }
+        .ring-fill.active { stroke: var(--text-2); }
+        .ring-fill.near { stroke: var(--amber) !important; filter: drop-shadow(0 0 6px rgba(245,158,11,.3)); }
+        .ring-fill.over { stroke: var(--red) !important; filter: drop-shadow(0 0 6px rgba(239,68,68,.3)); }
+        .ring-fill.win { stroke: var(--green) !important; filter: drop-shadow(0 0 8px rgba(34,197,94,.4)); }
 
-        /* Timer */
-        .tmr { font-family: var(--mono); font-size: 3.6rem; font-weight: 600; letter-spacing: -.02em; color: var(--text); line-height: 1; transition: color .3s; }
-        .tmr.run { color: var(--text); }
-        .tmr.win { color: var(--green); }
-        .tmr.lose { color: var(--red); }
-        .tmr-label { font-size: .65rem; color: var(--text-3); letter-spacing: .2em; text-transform: uppercase; font-weight: 500; margin-bottom: 8px; }
+        .ring-inner { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
 
-        @keyframes shake { 0%,100%{transform:translateX(0)} 10%,30%,50%,70%,90%{transform:translateX(-4px)} 20%,40%,60%,80%{transform:translateX(4px)} }
-        .tmr.shake { animation: shake .5s ease; }
+        .tmr { font-family:var(--mono); font-size:3.6rem; font-weight:600; letter-spacing:-.02em; color:var(--text); line-height:1; transition:color .3s; }
+        .tmr.run { color:var(--text); }
+        .tmr.win { color:var(--green); }
+        .tmr.lose { color:var(--red); }
+        .tmr-label { font-size:.65rem; color:var(--text-3); letter-spacing:.2em; text-transform:uppercase; font-weight:500; margin-bottom:8px; }
+
+        @keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-4px)}20%,40%,60%,80%{transform:translateX(4px)}}
+        .tmr.shake { animation:shake .5s ease; }
 
         /* Input */
-        .key-section { animation: fadeUp .5s ease .2s both; }
-        .key-label { font-size: .7rem; color: var(--text-3); letter-spacing: .12em; text-transform: uppercase; font-weight: 500; margin-bottom: 10px; }
-        input {
-            width: 100%; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border);
-            border-radius: 12px; color: var(--text); font-family: var(--mono); font-size: 1rem; font-weight: 500;
-            text-align: center; letter-spacing: .08em; text-transform: uppercase; outline: none;
-            transition: border-color .2s; margin-bottom: 16px;
-        }
-        input:focus { border-color: var(--text-3); }
-        input::placeholder { color: var(--text-3); font-family: var(--body); font-size: .85rem; font-weight: 400; letter-spacing: .02em; text-transform: none; }
+        .key-section { animation:fadeUp .5s ease .2s both; }
+        .key-label { font-size:.7rem; color:var(--text-3); letter-spacing:.12em; text-transform:uppercase; font-weight:500; margin-bottom:10px; }
+        input { width:100%; padding:16px 20px; background:var(--surface); border:1px solid var(--border); border-radius:12px; color:var(--text); font-family:var(--mono); font-size:1rem; font-weight:500; text-align:center; letter-spacing:.08em; text-transform:uppercase; outline:none; transition:border-color .2s; margin-bottom:16px; }
+        input:focus { border-color:var(--text-3); }
+        input::placeholder { color:var(--text-3); font-family:var(--body); font-size:.85rem; font-weight:400; letter-spacing:.02em; text-transform:none; }
 
-        /* Buttons */
-        button {
-            width: 100%; padding: 16px 24px; border-radius: 12px; border: none;
-            font-family: var(--body); font-weight: 600; font-size: .95rem; letter-spacing: .04em;
-            cursor: pointer; transition: all .15s ease; position: relative; overflow: hidden;
-        }
-        button:active { transform: scale(.97); }
-        button:disabled { opacity: .4; cursor: not-allowed; transform: none!important; }
-        .btn-go { background: var(--text); color: var(--bg); }
-        .btn-go:hover:not(:disabled) { box-shadow: 0 4px 24px rgba(250,250,250,.1); }
-        .btn-go.run { background: var(--red); color: #fff; animation: btnP 1.5s ease-in-out infinite; }
-        @keyframes btnP { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.3)} 50%{box-shadow:0 0 0 10px rgba(239,68,68,0)} }
+        button { width:100%; padding:16px 24px; border-radius:12px; border:none; font-family:var(--body); font-weight:600; font-size:.95rem; letter-spacing:.04em; cursor:pointer; transition:all .15s ease; position:relative; overflow:hidden; }
+        button:active { transform:scale(.97); }
+        button:disabled { opacity:.4; cursor:not-allowed; transform:none!important; }
+        .btn-go { background:var(--text); color:var(--bg); }
+        .btn-go:hover:not(:disabled) { box-shadow:0 4px 24px rgba(250,250,250,.1); }
+        .btn-go.run { background:var(--red); color:#fff; animation:btnP 1.5s ease-in-out infinite; }
+        @keyframes btnP{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.3)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
 
-        /* Status */
-        .status-bar { display: flex; justify-content: center; gap: 32px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); animation: fadeUp .5s ease .3s both; }
-        .stat { text-align: center; }
-        .stat-label { font-size: .6rem; color: var(--text-3); letter-spacing: .15em; text-transform: uppercase; font-weight: 500; }
-        .stat-value { font-family: var(--mono); font-size: .8rem; font-weight: 500; color: var(--text-2); margin-top: 4px; }
+        /* Status — only 2 items now */
+        .status-bar { display:flex; justify-content:center; gap:48px; margin-top:28px; padding-top:20px; border-top:1px solid var(--border); animation:fadeUp .5s ease .3s both; }
+        .stat { text-align:center; }
+        .stat-label { font-size:.6rem; color:var(--text-3); letter-spacing:.15em; text-transform:uppercase; font-weight:500; }
+        .stat-value { font-family:var(--mono); font-size:.8rem; font-weight:500; color:var(--text-2); margin-top:4px; }
 
         /* Toast */
-        #toast {
-            position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-120px);
-            background: var(--surface-2); border: 1px solid var(--border); color: var(--text);
-            padding: 14px 28px; border-radius: 12px; font-size: .85rem; font-weight: 500;
-            z-index: 1000; transition: transform .4s cubic-bezier(.16,1,.3,1);
-            white-space: nowrap; max-width: 90vw; overflow: hidden; text-overflow: ellipsis;
-        }
-        #toast.vis { transform: translateX(-50%) translateY(0); }
+        #toast { position:fixed; top:24px; left:50%; transform:translateX(-50%) translateY(-120px); background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:14px 28px; border-radius:12px; font-size:.85rem; font-weight:500; z-index:1000; transition:transform .4s cubic-bezier(.16,1,.3,1); white-space:nowrap; max-width:90vw; overflow:hidden; text-overflow:ellipsis; }
+        #toast.vis { transform:translateX(-50%) translateY(0); }
 
-        #confetti { position: fixed; inset: 0; z-index: 999; pointer-events: none; }
+        /* Confetti canvas */
+        #confetti { position:fixed; inset:0; z-index:999; pointer-events:none; }
+
+        /* ═══ WIN OVERLAY ═══ */
+        .win-overlay {
+            display:none; position:fixed; inset:0; z-index:998;
+            background:rgba(9,9,11,.88); backdrop-filter:blur(6px);
+            flex-direction:column; align-items:center; justify-content:center;
+            animation:fadeIn .4s ease;
+        }
+        .win-overlay.on { display:flex; }
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .win-icon { font-size:5rem; margin-bottom:16px; animation:winBounce .6s cubic-bezier(.34,1.56,.64,1); }
+        @keyframes winBounce{0%{transform:scale(0) rotate(-10deg)}100%{transform:scale(1) rotate(0)}}
+        .win-title { font-family:var(--body); font-size:2rem; font-weight:800; color:var(--green); letter-spacing:-.01em; margin-bottom:8px; }
+        .win-time { font-family:var(--mono); font-size:1.4rem; font-weight:600; color:var(--text-2); margin-bottom:6px; }
+        .win-sub { font-size:.85rem; color:var(--text-3); font-weight:400; margin-bottom:32px; }
+        .win-btn { width:auto; padding:14px 48px; background:var(--green); color:#000; border-radius:12px; font-weight:700; font-size:.95rem; border:none; cursor:pointer; }
+        .win-btn:hover { box-shadow:0 4px 20px rgba(34,197,94,.3); }
+
+        /* ═══ LOSE OVERLAY ═══ */
+        .lose-overlay {
+            display:none; position:fixed; inset:0; z-index:998;
+            background:rgba(9,9,11,.85); backdrop-filter:blur(4px);
+            flex-direction:column; align-items:center; justify-content:center;
+            animation:fadeIn .3s ease;
+        }
+        .lose-overlay.on { display:flex; }
+        .lose-icon { font-size:4rem; margin-bottom:16px; }
+        .lose-title { font-family:var(--body); font-size:1.5rem; font-weight:700; color:var(--red); margin-bottom:8px; }
+        .lose-time { font-family:var(--mono); font-size:1.2rem; color:var(--text-2); margin-bottom:6px; }
+        .lose-diff { font-family:var(--mono); font-size:.85rem; color:var(--text-3); margin-bottom:32px; }
+        .lose-btn { width:auto; padding:14px 48px; background:var(--text); color:var(--bg); border-radius:12px; font-weight:700; font-size:.95rem; border:none; cursor:pointer; }
 
         /* Admin */
-        #admScr .container { max-width: 600px; }
-        .adm-tools { background: var(--surface); border: 1px solid var(--border); padding: 20px; border-radius: 16px; margin-bottom: 20px; }
-        .adm-tools h3 { font-size: .7rem; color: var(--text-3); letter-spacing: .12em; text-transform: uppercase; font-weight: 500; margin-bottom: 14px; }
-        .gen-box { display: flex; gap: 10px; margin-bottom: 10px; }
-        #genCount { width: 80px; margin-bottom: 0; padding: 12px; font-size: .85rem; }
-        .btn-gen { flex: 2; background: var(--text); color: var(--bg); padding: 12px; font-size: .85rem; }
-        .btn-dl { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,.2); margin-top: 10px; padding: 12px; font-size: .85rem; }
-        .tb-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: .8rem; }
-        th { text-align: left; padding: 14px 16px; color: var(--text-3); font-size: .65rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 500; border-bottom: 1px solid var(--border); }
-        td { padding: 12px 16px; font-family: var(--mono); font-size: .75rem; border-bottom: 1px solid rgba(39,39,42,.5); color: var(--text-2); }
+        #admScr .container { max-width:600px; }
+        .adm-tools { background:var(--surface); border:1px solid var(--border); padding:20px; border-radius:16px; margin-bottom:20px; }
+        .adm-tools h3 { font-size:.7rem; color:var(--text-3); letter-spacing:.12em; text-transform:uppercase; font-weight:500; margin-bottom:14px; }
+        .gen-box { display:flex; gap:10px; margin-bottom:10px; }
+        #genCount { width:80px; margin-bottom:0; padding:12px; font-size:.85rem; }
+        .btn-gen { flex:2; background:var(--text); color:var(--bg); padding:12px; font-size:.85rem; }
+        .btn-dl { background:var(--green-dim); color:var(--green); border:1px solid rgba(34,197,94,.2); margin-top:10px; padding:12px; font-size:.85rem; }
+        .tb-wrap { background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; font-size:.8rem; }
+        th { text-align:left; padding:14px 16px; color:var(--text-3); font-size:.65rem; letter-spacing:.08em; text-transform:uppercase; font-weight:500; border-bottom:1px solid var(--border); }
+        td { padding:12px 16px; font-family:var(--mono); font-size:.75rem; border-bottom:1px solid rgba(39,39,42,.5); color:var(--text-2); }
 
-        .nav { position: fixed; bottom: 0; width: 100%; background: var(--surface); border-top: 1px solid var(--border); display: flex; z-index: 50; }
-        .nav-b { flex: 1; padding: 16px; text-align: center; color: var(--text-3); cursor: pointer; font-size: .75rem; font-weight: 600; letter-spacing: .1em; transition: color .2s; }
-        .nav-b.act { color: var(--text); }
+        .nav { position:fixed; bottom:0; width:100%; background:var(--surface); border-top:1px solid var(--border); display:flex; z-index:50; }
+        .nav-b { flex:1; padding:16px; text-align:center; color:var(--text-3); cursor:pointer; font-size:.75rem; font-weight:600; letter-spacing:.1em; transition:color .2s; }
+        .nav-b.act { color:var(--text); }
 
-        @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
         @media(max-width:380px){ .tmr{font-size:2.8rem} .ring-wrap{width:240px;height:240px} }
     </style>
 </head>
 <body>
     <div id="toast">Error</div>
     <canvas id="confetti"></canvas>
+
+    <!-- Win overlay -->
+    <div class="win-overlay" id="winOverlay">
+        <div class="win-icon">🎯</div>
+        <div class="win-title">¡GANASTE!</div>
+        <div class="win-time" id="winTime">10.000s</div>
+        <div class="win-sub">Tu resultado está en revisión</div>
+        <button class="win-btn" onclick="closeOverlays()">Cerrar</button>
+    </div>
+
+    <!-- Lose overlay -->
+    <div class="lose-overlay" id="loseOverlay">
+        <div class="lose-icon" id="loseIcon">⏱</div>
+        <div class="lose-title" id="loseTitle">No esta vez</div>
+        <div class="lose-time" id="loseTime">00.000s</div>
+        <div class="lose-diff" id="loseDiff"></div>
+        <button class="lose-btn" onclick="closeOverlays()">Intentar de nuevo</button>
+    </div>
 
     <div id="calScr" class="scr on">
         <div class="container">
@@ -166,7 +191,7 @@
                 <div class="prize-dot"></div>
                 <span class="prize-text">$200 EN JUEGO</span>
             </div>
-            <div class="objective">Detén el reloj exactamente en <b>10.000s</b></div>
+            <div class="objective">Detén el reloj exactamente en <b>10.00 segundos</b></div>
             <div class="ring-wrap">
                 <svg class="ring-svg" viewBox="0 0 280 280">
                     <circle class="ring-bg" cx="140" cy="140" r="130"/>
@@ -183,8 +208,7 @@
             </div>
             <button id="btn" class="btn-go" onclick="handleBtn(event)">INICIAR RETO</button>
             <div class="status-bar">
-                <div class="stat"><div class="stat-label">Objetivo</div><div class="stat-value">10.000s</div></div>
-                <div class="stat"><div class="stat-label">Tolerancia</div><div class="stat-value">±50ms</div></div>
+                <div class="stat"><div class="stat-label">Objetivo</div><div class="stat-value">10.00s</div></div>
                 <div class="stat"><div class="stat-label">Premio</div><div class="stat-value" style="color:var(--amber)">$200</div></div>
             </div>
         </div>
@@ -222,6 +246,9 @@
     </div>
 
     <script>
+    // ═══════════════════════════════════════════════════════════
+    // VISUAL ENGINE — Ring, Sound, Confetti, Overlays
+    // ═══════════════════════════════════════════════════════════
     !function(){
         var ring = document.getElementById('ringFill');
         var tmr = document.getElementById('tmr');
@@ -231,15 +258,12 @@
         ring.style.strokeDasharray = CIRC;
         ring.style.strokeDashoffset = CIRC;
 
-        // State flag to prevent observer loops
         var processing = false;
         var gameActive = false;
         var ringAnim = null;
 
         // ── Audio ──
-        var audioCtx = null;
-        var oscNode = null;
-        var gainNode = null;
+        var audioCtx = null, oscNode = null, gainNode = null;
 
         function startTension(){
             try {
@@ -272,13 +296,12 @@
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 [523,659,784].forEach(function(f,i){
-                    var o=audioCtx.createOscillator(), g=audioCtx.createGain();
-                    o.type='sine'; o.frequency.value=f; g.gain.value=0.08;
-                    g.gain.setValueAtTime(0.08,audioCtx.currentTime+i*.15);
-                    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+i*.15+.5);
-                    o.connect(g); g.connect(audioCtx.destination);
-                    o.start(audioCtx.currentTime+i*.15);
-                    o.stop(audioCtx.currentTime+i*.15+.5);
+                    var o=audioCtx.createOscillator(),g=audioCtx.createGain();
+                    o.type='sine';o.frequency.value=f;g.gain.value=0.1;
+                    g.gain.setValueAtTime(0.1,audioCtx.currentTime+i*.15);
+                    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+i*.15+.6);
+                    o.connect(g);g.connect(audioCtx.destination);
+                    o.start(audioCtx.currentTime+i*.15);o.stop(audioCtx.currentTime+i*.15+.6);
                 });
             } catch(e){}
         }
@@ -286,12 +309,11 @@
         function playLose(){
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                var o=audioCtx.createOscillator(), g=audioCtx.createGain();
-                o.type='sawtooth'; o.frequency.value=150; g.gain.value=0.06;
+                var o=audioCtx.createOscillator(),g=audioCtx.createGain();
+                o.type='sawtooth';o.frequency.value=150;g.gain.value=0.06;
                 g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+.4);
                 o.frequency.exponentialRampToValueAtTime(80,audioCtx.currentTime+.4);
-                o.connect(g); g.connect(audioCtx.destination);
-                o.start(); o.stop(audioCtx.currentTime+.4);
+                o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.4);
             } catch(e){}
         }
 
@@ -299,6 +321,7 @@
         function startRing(){
             gameActive = true;
             ring.classList.remove('near','over','win');
+            ring.classList.add('active');
             startTension();
             tickRing();
         }
@@ -308,105 +331,161 @@
             var txt = tmr.textContent || '00.000';
             var p = txt.split('.');
             var total = (parseInt(p[0])||0) + (parseInt(p[1])||0)/1000;
-            var progress = Math.min(total/14, 1);
+
+            // Fill ring over 14 seconds
+            var progress = Math.min(total / 14, 1);
             ring.style.strokeDashoffset = CIRC - (progress * CIRC);
+
+            // Color zones
             ring.classList.remove('near','over');
-            if (total >= 9 && total <= 11) ring.classList.add('near');
-            if (total > 11) ring.classList.add('over');
+            if (total >= 8.5 && total <= 11.5) ring.classList.add('near');
+            if (total > 11.5) ring.classList.add('over');
+
             updateTension(total);
             ringAnim = requestAnimationFrame(tickRing);
         }
 
-        function stopRing(win){
+        function stopRing(isWin){
             gameActive = false;
-            if (ringAnim){ cancelAnimationFrame(ringAnim); ringAnim=null; }
+            if (ringAnim){ cancelAnimationFrame(ringAnim); ringAnim = null; }
             stopTension();
-            if (win) ring.classList.add('win');
+            ring.classList.remove('active','near','over');
+            if (isWin) ring.classList.add('win');
         }
 
         function resetRing(){
             ring.style.strokeDashoffset = CIRC;
-            ring.classList.remove('near','over','win');
+            ring.classList.remove('active','near','over','win');
         }
 
         // ── Confetti ──
-        var particles=[], confettiOn=false;
-        function resizeC(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
-        window.addEventListener('resize',resizeC); resizeC();
+        var particles = [], confettiOn = false;
+        function resizeC(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeC); resizeC();
 
         function fireConfetti(){
-            particles=[];
-            var colors=['#f59e0b','#22c55e','#fafafa','#eab308','#a3e635','#fbbf24'];
-            for(var i=0;i<120;i++){
-                particles.push({
-                    x:canvas.width/2+(Math.random()-.5)*100, y:canvas.height*.4,
-                    vx:(Math.random()-.5)*14, vy:-Math.random()*16-4,
-                    w:Math.random()*8+3, h:Math.random()*6+2,
-                    color:colors[Math.floor(Math.random()*colors.length)],
-                    rot:Math.random()*360, rv:(Math.random()-.5)*12,
-                    g:.25+Math.random()*.1, life:1, decay:.006+Math.random()*.006
-                });
+            particles = [];
+            var colors = ['#f59e0b','#22c55e','#fafafa','#eab308','#a3e635','#fbbf24','#facc15'];
+            // Burst from multiple points
+            for (var b = 0; b < 3; b++){
+                var cx = canvas.width * (0.25 + b * 0.25);
+                for (var i = 0; i < 50; i++){
+                    particles.push({
+                        x: cx + (Math.random()-.5)*60,
+                        y: canvas.height * 0.35,
+                        vx: (Math.random()-.5) * 16,
+                        vy: -Math.random() * 18 - 6,
+                        w: Math.random()*10 + 4,
+                        h: Math.random()*6 + 3,
+                        color: colors[Math.floor(Math.random()*colors.length)],
+                        rot: Math.random()*360,
+                        rv: (Math.random()-.5)*14,
+                        g: 0.3 + Math.random()*.15,
+                        life: 1,
+                        decay: 0.005 + Math.random()*0.005
+                    });
+                }
             }
-            confettiOn=true; animC();
+            confettiOn = true;
+            animC();
         }
 
         function animC(){
-            if(!confettiOn)return;
+            if (!confettiOn) return;
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            var alive=false;
-            for(var i=0;i<particles.length;i++){
-                var p=particles[i]; if(p.life<=0)continue; alive=true;
-                p.x+=p.vx; p.y+=p.vy; p.vy+=p.g; p.vx*=.99; p.rot+=p.rv; p.life-=p.decay;
-                ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
-                ctx.globalAlpha=p.life; ctx.fillStyle=p.color;
-                ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
+            var alive = false;
+            for (var i = 0; i < particles.length; i++){
+                var p = particles[i];
+                if (p.life <= 0) continue;
+                alive = true;
+                p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= 0.99;
+                p.rot += p.rv; p.life -= p.decay;
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rot * Math.PI / 180);
+                ctx.globalAlpha = Math.min(p.life, 1);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                ctx.restore();
             }
-            if(alive) requestAnimationFrame(animC);
-            else { confettiOn=false; ctx.clearRect(0,0,canvas.width,canvas.height); }
+            if (alive) requestAnimationFrame(animC);
+            else { confettiOn = false; ctx.clearRect(0,0,canvas.width,canvas.height); }
+        }
+
+        // ── Overlays ──
+        window.closeOverlays = function(){
+            document.getElementById('winOverlay').classList.remove('on');
+            document.getElementById('loseOverlay').classList.remove('on');
+        };
+
+        function showWinOverlay(timeText){
+            document.getElementById('winTime').textContent = timeText;
+            document.getElementById('winOverlay').classList.add('on');
+        }
+
+        function showLoseOverlay(timeText, diff, wasTimeout){
+            document.getElementById('loseTime').textContent = timeText;
+            if (wasTimeout){
+                document.getElementById('loseIcon').textContent = '⏰';
+                document.getElementById('loseTitle').textContent = 'Tiempo agotado';
+                document.getElementById('loseDiff').textContent = 'Se pasó del límite';
+            } else {
+                document.getElementById('loseIcon').textContent = diff < 200 ? '🔥' : '⏱';
+                document.getElementById('loseTitle').textContent = diff < 200 ? '¡Casi!' : 'No esta vez';
+                document.getElementById('loseDiff').textContent = 'Diferencia: ' + diff + 'ms';
+            }
+            document.getElementById('loseOverlay').classList.add('on');
         }
 
         // ══════════════════════════════════════════════════
-        // OBSERVER — watches #tmr class changes
-        // Uses 'processing' flag to prevent infinite loops
+        // OBSERVER
         // ══════════════════════════════════════════════════
         var lastState = '';
 
-        var observer = new MutationObserver(function(mutations){
-            if (processing) return; // Prevent re-entry!
+        var observer = new MutationObserver(function(){
+            if (processing) return;
 
             var cl = tmr.classList;
-            var current = '';
-            if (cl.contains('win')) current = 'win';
-            else if (cl.contains('lose')) current = 'lose';
-            else if (cl.contains('run')) current = 'run';
-            else current = 'idle';
+            var cur = '';
+            if (cl.contains('win')) cur = 'win';
+            else if (cl.contains('lose')) cur = 'lose';
+            else if (cl.contains('run')) cur = 'run';
+            else cur = 'idle';
 
-            // Only react if state actually changed
-            if (current === lastState) return;
-            lastState = current;
-
+            if (cur === lastState) return;
+            lastState = cur;
             processing = true;
 
-            if (current === 'run' && !gameActive){
+            if (cur === 'run' && !gameActive){
                 startRing();
             }
-            else if (current === 'win'){
+            else if (cur === 'win'){
                 stopRing(true);
                 playWin();
                 fireConfetti();
+                // Read time for overlay
+                var t = tmr.textContent || '00.000';
+                setTimeout(function(){ showWinOverlay(t + 's'); }, 300);
             }
-            else if (current === 'lose'){
+            else if (cur === 'lose'){
                 stopRing(false);
                 playLose();
-                // Add shake without re-triggering observer
+                // Shake
                 tmr.classList.add('shake');
-                setTimeout(function(){ 
+                setTimeout(function(){
                     processing = true;
-                    tmr.classList.remove('shake'); 
+                    tmr.classList.remove('shake');
                     processing = false;
                 }, 500);
+                // Read info for overlay
+                var t = tmr.textContent || '00.000';
+                var parts = t.split('.');
+                var elapsed = (parseInt(parts[0])||0)*1000 + (parseInt(parts[1])||0);
+                var diff = Math.abs(elapsed - 10000);
+                var wasTimeout = elapsed > 14000;
+                setTimeout(function(){ showLoseOverlay(t + 's', diff, wasTimeout); }, 600);
             }
-            else if (current === 'idle'){
+            else if (cur === 'idle'){
                 stopRing(false);
                 resetRing();
             }
