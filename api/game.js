@@ -5,7 +5,7 @@ const { kv } = require('@vercel/kv');
 const SECRET = process.env.SESSION_SECRET || 'dev-secret-cambiar-en-produccion-x9k2m';
 const ADMIN_KEY = process.env.ADMIN_KEY || 'admin2024';
 const TARGET_MS = 10000;
-const TOLERANCE_MS = 100;
+const TOLERANCE_MS = 50;
 const MAX_AUDIT_ENTRIES = 500;
 
 // ─── LAS 100 CLAVES ÚNICAS (10 caracteres, alfanuméricas + símbolos) ───
