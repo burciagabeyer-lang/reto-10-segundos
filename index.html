@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reto 10 Segundos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#06080f;--card:#0d1117;--card2:#161b22;
+      --cyan:#00e5ff;--cyan-d:#00e5ff40;
+      --green:#00ff88;--green-d:#00ff8830;
+      --red:#ff3366;--red-d:#ff336630;
+      --gold:#ffd700;--gold-d:#ffd70030;
+      --purple:#a78bfa;
+      --txt:#e6edf3;--dim:#8b949e;--bdr:#21262d;
+      --mono:'JetBrains Mono',monospace;
+      --ui:'Rajdhani',sans-serif;
+    }
+    body{font-family:var(--ui);background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background:linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+    .wrap{position:relative;z-index:1;max-width:580px;margin:0 auto;padding:20px 16px 80px;min-height:100vh;display:flex;flex-direction:column}
+    .hdr{text-align:center;padding:24px 0 8px}
+    .hdr h1{font-size:1.9rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,var(--cyan),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hdr p{color:var(--dim);font-size:.95rem;margin-top:4px;letter-spacing:.5px}
+    .scr{display:none;flex-direction:column;align-items:center;flex:1}.scr.on{display:flex}
+
+    #calScr{justify-content:center;gap:20px;text-align:center}
+    .spinner{width:44px;height:44px;border:3px solid var(--bdr);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .cal-txt{font-size:1.05rem;color:var(--dim)}.cal-det{font-family:var(--mono);font-size:.8rem;color:var(--cyan);opacity:.7}
+
+    #gameScr{justify-content:center;gap:28px;padding-bottom:30px}
+    .ping{font-family:var(--mono);font-size:.78rem;color:var(--dim);background:var(--card);border:1px solid var(--bdr);padding:4px 14px;border-radius:20px;display:flex;align-items:center;gap:6px}
+    .ping-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pdot 2s infinite}
+    @keyframes pdot{0%,100%{opacity:1}50%{opacity:.3}}
+    .target{text-align:center;font-size:.92rem;color:var(--dim);letter-spacing:.5px}
+    .target b{color:var(--cyan);font-family:var(--mono);font-weight:700}
+
+    .tmr-wrap{position:relative;padding:20px 0}
+    .tmr{font-family:var(--mono);font-size:4.2rem;font-weight:700;text-align:center;letter-spacing:3px;line-height:1;transition:color .3s;position:relative}
+    .tmr.run{color:var(--cyan)}.tmr.win{color:var(--gold)}.tmr.lose{color:var(--red)}
+    .tmr-glow{position:absolute;inset:-20px;border-radius:20px;opacity:0;transition:opacity .4s;pointer-events:none}
+    .tmr.run~.tmr-glow{background:radial-gradient(ellipse at center,var(--cyan-d),transparent 70%);opacity:1}
+    .tmr.win~.tmr-glow{background:radial-gradient(ellipse at center,var(--gold-d),transparent 70%);opacity:1}
+
+    .btn-go{width:190px;height:190px;border-radius:50%;border:3px solid var(--cyan);background:linear-gradient(145deg,#0d1117,#161b22);color:var(--cyan);font-family:var(--ui);font-size:1.4rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;user-select:none}
+    .btn-go:active{transform:scale(.94);border-color:var(--green);color:var(--green)}
+    .btn-go.run{border-color:var(--red);color:var(--red);animation:bpulse 1.5s ease-in-out infinite}
+    @keyframes bpulse{0%,100%{box-shadow:0 0 0 0 var(--red-d)}50%{box-shadow:0 0 0 14px transparent}}
+    .btn-go:disabled{opacity:.35;cursor:not-allowed}
+
+    #resScr{justify-content:center;gap:18px;text-align:center}
+    .res-card{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:28px;width:100%;max-width:400px}
+    .res-card.win{border-color:var(--gold);box-shadow:0 0 40px var(--gold-d)}
+    .res-card.lose{border-color:var(--red)}
+    .res-icon{font-size:2.8rem;margin-bottom:8px}
+    .res-title{font-size:1.4rem;font-weight:700;letter-spacing:1px;margin-bottom:2px}
+    .res-card.win .res-title{color:var(--gold)}.res-card.lose .res-title{color:var(--red)}
+    .res-time{font-family:var(--mono);font-size:2.8rem;font-weight:700;margin:14px 0;letter-spacing:2px}
+    .res-card.win .res-time{color:var(--gold)}
+    .res-diff{font-family:var(--mono);font-size:.9rem;color:var(--dim);margin-bottom:6px}
+    .badge{display:inline-block;font-size:.75rem;font-family:var(--mono);padding:3px 10px;border-radius:6px;margin-top:6px}
+    .badge-pend{background:var(--gold-d);color:var(--gold);border:1px solid var(--gold)}
+    .badge-clean{background:var(--green-d);color:var(--green);border:1px solid var(--green)}
+    .badge-sus{background:var(--red-d);color:var(--red);border:1px solid var(--red)}
+
+    .btn-retry{background:transparent;border:2px solid var(--cyan);color:var(--cyan);font-family:var(--ui);font-size:1.05rem;font-weight:600;letter-spacing:1px;padding:11px 32px;border-radius:10px;cursor:pointer;transition:all .2s;margin-top:8px}
+    .btn-retry:hover{background:var(--cyan);color:var(--bg)}
+
+    .hist{width:100%;max-width:400px;margin-top:16px}
+    .hist-t{font-size:.8rem;color:var(--dim);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+    .hist-list{display:flex;flex-direction:column;gap:5px}
+    .h-item{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:7px 12px;font-family:var(--mono);font-size:.78rem}
+    .h-item .ht{color:var(--txt)}.h-item .hd{color:var(--dim)}
+    .h-item.hw{border-color:var(--gold);background:var(--gold-d)}.h-item.hw .hd{color:var(--gold)}
+
+    #admScr{gap:14px;padding:16px 0}
+    .adm-hdr h2{font-size:1.3rem;color:var(--purple);letter-spacing:1px;text-align:center;margin-bottom:8px}
+    .adm-login{display:flex;gap:8px;width:100%;max-width:380px}
+    .adm-login input{flex:1;background:var(--card);border:1px solid var(--bdr);color:var(--txt);font-family:var(--mono);font-size:.85rem;padding:9px 12px;border-radius:8px;outline:none}
+    .adm-login input:focus{border-color:var(--purple)}
+    .adm-login button{background:var(--purple);color:var(--bg);border:none;font-family:var(--ui);font-weight:700;font-size:.9rem;padding:9px 18px;border-radius:8px;cursor:pointer}
+    .adm-flt{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+    .fbtn{background:var(--card);border:1px solid var(--bdr);color:var(--dim);font-family:var(--mono);font-size:.72rem;padding:5px 12px;border-radius:6px;cursor:pointer;transition:all .15s}
+    .fbtn:hover,.fbtn.act{border-color:var(--purple);color:var(--purple)}
+    .adm-tw{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:10px}
+    .adm-tbl{width:100%;min-width:580px;border-collapse:collapse;font-family:var(--mono);font-size:.72rem}
+    .adm-tbl th{background:var(--card);color:var(--dim);text-transform:uppercase;letter-spacing:1px;font-size:.62rem;padding:9px 7px;border-bottom:1px solid var(--bdr);text-align:left;position:sticky;top:0}
+    .adm-tbl td{padding:7px;border-bottom:1px solid var(--bdr);color:var(--txt)}
+    .adm-tbl tr:hover td{background:var(--card2)}
+
+    .nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bdr);display:flex;justify-content:center;gap:28px;padding:9px;z-index:10}
+    .nav-b{background:none;border:none;color:var(--dim);font-family:var(--ui);font-size:.82rem;cursor:pointer;padding:5px 10px;letter-spacing:1px;transition:color .2s}
+    .nav-b:hover,.nav-b.act{color:var(--cyan)}
+
+    .toast{position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--red);color:#fff;font-family:var(--mono);font-size:.82rem;padding:11px 22px;border-radius:10px;z-index:100;transition:transform .3s ease;text-align:center;max-width:90vw}
+    .toast.vis{transform:translateX(-50%) translateY(0)}
+
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .fi{animation:fadeIn .4s ease forwards}
+    @keyframes wburst{0%{box-shadow:0 0 0 0 var(--gold)}50%{box-shadow:0 0 50px 8px var(--gold-d)}100%{box-shadow:0 0 35px 4px var(--gold-d)}}
+    .wburst{animation:wburst .6s ease-out}
+
+    @media(max-width:480px){
+      .tmr{font-size:3rem}.btn-go{width:155px;height:155px;font-size:1.15rem}
+      .res-time{font-size:2.2rem}.hdr h1{font-size:1.4rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"></div>
+  <div class="wrap">
+    <div class="hdr">
+      <h1>Reto 10 Segundos</h1>
+      <p>Detén el reloj en exactamente 10.000 segundos</p>
+    </div>
+    <div class="scr on" id="calScr">
+      <div class="spinner"></div>
+      <div class="cal-txt">Calibrando conexión...</div>
+      <div class="cal-det" id="calDet">Midiendo latencia...</div>
+    </div>
+    <div class="scr" id="gameScr">
+      <div class="ping"><div class="ping-dot"></div><span id="pingTxt">Ping: --ms</span></div>
+      <div class="target">Objetivo: <b>10.000s</b> ±<b>100ms</b></div>
+      <div class="tmr-wrap">
+        <div class="tmr" id="tmr">00.000</div>
+        <div class="tmr-glow"></div>
+      </div>
+      <button class="btn-go" id="btn" onclick="handleBtn(event)">INICIAR</button>
+    </div>
+    <div class="scr" id="resScr">
+      <div class="res-card" id="resCard">
+        <div class="res-icon" id="resIcon"></div>
+        <div class="res-title" id="resTitle"></div>
+        <div class="res-time" id="resTime"></div>
+        <div class="res-diff" id="resDiff"></div>
+        <span class="badge" id="resBadge"></span>
+      </div>
+      <button class="btn-retry" onclick="reset()">INTENTAR DE NUEVO</button>
+      <div class="hist" id="histWrap" style="display:none">
+        <div class="hist-t">Historial</div>
+        <div class="hist-list" id="histList"></div>
+      </div>
+    </div>
+    <div class="scr" id="admScr">
+      <div class="adm-hdr"><h2>Panel de Auditoría</h2></div>
+      <div class="adm-login" id="admLogin">
+        <input type="password" id="admKey" placeholder="Clave de administración">
+        <button onclick="admAuth()">Entrar</button>
+      </div>
+      <div id="admBody" style="display:none;width:100%">
+        <div class="adm-flt">
+          <button class="fbtn act" onclick="admFlt('all',this)">Todos</button>
+          <button class="fbtn" onclick="admFlt('winners',this)">Ganadores</button>
+          <button class="fbtn" onclick="admFlt('pending',this)">Pendientes</button>
+          <button class="fbtn" onclick="admFlt('suspicious',this)">Sospechosos</button>
+        </div>
+        <div class="adm-tw">
+          <table class="adm-tbl">
+            <thead><tr><th>Hora</th><th>IP</th><th>Tiempo</th><th>Dif.</th><th>Drift</th><th>Trust</th><th>Status</th></tr></thead>
+            <tbody id="admTb"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-b act" id="nGame" onclick="nav('game')">Juego</button>
+    <button class="nav-b" id="nAdmin" onclick="nav('admin')">Admin</button>
+  </div>
+
+  <script>
+  (function(){
+    var API='/api/game';
+    var S={phase:'idle',token:null,t0:null,lat:0,iv:null,hist:[]};
+    var $=function(s){return document.querySelector(s)};
+    var tmr=$('#tmr'),btn=$('#btn');
+
+    function toast(m,d){d=d||3000;var t=$('#toast');t.textContent=m;t.classList.add('vis');setTimeout(function(){t.classList.remove('vis')},d)}
+    function fmt(ms){var s=Math.floor(ms/1000).toString();while(s.length<2)s='0'+s;var m=Math.floor(ms%1000).toString();while(m.length<3)m='0'+m;return s+'.'+m}
+    function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+
+    function api(act,method,body,p){
+      method=method||'GET';p=p||'';
+      var u=API+'?action='+act+p;
+      var o={method:method,headers:{'Content-Type':'application/json'}};
+      if(body)o.body=JSON.stringify(body);
+      return fetch(u,o).then(function(r){
+        return r.json().then(function(d){
+          if(!r.ok)throw new Error(d.error||'Error del servidor');
+          return d;
+        });
+      });
+    }
+
+    function navTo(n){
+      document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on')});
+      document.querySelectorAll('.nav-b').forEach(function(b){b.classList.remove('act')});
+      if(n==='game'){
+        (S.phase==='stopped'?$('#resScr'):$('#gameScr')).classList.add('on');
+        $('#nGame').classList.add('act');
+      }else{
+        $('#admScr').classList.add('on');
+        $('#nAdmin').classList.add('act');
+      }
+    }
+    window.nav=navTo;
+
+    window.reset=function(){
+      S.phase='idle';tmr.textContent='00.000';tmr.className='tmr';
+      btn.textContent='INICIAR';btn.className='btn-go';btn.disabled=false;
+      tmr.style.textShadow='none';
+      $('#gameScr').classList.add('on');$('#resScr').classList.remove('on');
+      $('#nGame').classList.add('act');
+    };
+
+    function calibrate(){
+      var det=$('#calDet');var pings=[];var fails=0;var i=0;
+      function next(){
+        if(i>=5){
+          pings.sort(function(a,b){return a-b});
+          var mid=pings.slice(1,-1);
+          S.lat=Math.round(mid.reduce(function(a,b){return a+b},0)/mid.length);
+          det.textContent='Latencia: '+S.lat+'ms — Listo!';
+          $('#pingTxt').textContent='Ping: '+S.lat+'ms';
+          setTimeout(function(){
+            $('#calScr').classList.remove('on');
+            $('#gameScr').classList.add('on','fi');
+          },700);
+          return;
+        }
+        det.textContent='Ping '+(i+1)+'/5...';
+        var t=performance.now();
+        api('ping').then(function(){
+          pings.push(performance.now()-t);
+          i++;next();
+        }).catch(function(){
+          fails++;
+          if(fails>8){det.textContent='No se pudo conectar.';toast('Error de conexión');return}
+          setTimeout(next,800);
+        });
+      }
+      next();
+    }
+
+    window.handleBtn=function(ev){
+      var trusted=ev&&ev.isTrusted===true;
+      if(S.phase==='idle')doStart(trusted);
+      else if(S.phase==='running')doStop(trusted);
+    };
+
+    function doStart(tr){
+      btn.disabled=true;btn.textContent='...';
+      api('start','POST').then(function(d){
+        S.token=d.token;S.t0=performance.now();S.phase='running';
+        btn.disabled=false;btn.textContent='DETENER';btn.classList.add('run');
+        tmr.classList.add('run');
+        var off=S.lat/2;var mk=performance.now()-off;
+        clearInterval(S.iv);
+        S.iv=setInterval(function(){
+          var el=performance.now()-mk;tmr.textContent=fmt(el);
+          tmr.style.textShadow=(el>9000&&el<11000)?'0 0 18px var(--cyan)':'none';
+        },16);
+      }).catch(function(e){
+        toast(e.message);btn.disabled=false;btn.textContent='INICIAR';S.phase='idle';
+      });
+    }
+
+    function doStop(tr){
+      clearInterval(S.iv);
+      var ce=Math.round(performance.now()-S.t0);
+      btn.disabled=true;btn.textContent='...';btn.classList.remove('run');
+      api('stop','POST',{token:S.token,isTrusted:tr,clientElapsed:ce}).then(function(r){
+        S.phase='stopped';showResult(r);
+        S.hist.unshift({t:r.serverElapsed,d:r.diff,w:r.isWinner});
+        if(S.hist.length>10)S.hist.pop();
+      }).catch(function(e){toast(e.message);window.reset()});
+    }
+
+    function showResult(r){
+      var c=$('#resCard');var w=r.isWinner;var sus=r.status==='SOSPECHOSO';
+      c.className='res-card fi '+(w?'win wburst':'lose');
+      $('#resIcon').textContent=w?'\u{1F3C6}':(sus?'\u26A0\uFE0F':'\u23F1\uFE0F');
+      $('#resTitle').textContent=w?'¡POSIBLE GANADOR!':(sus?'INTENTO SOSPECHOSO':'SIGUE INTENTANDO');
+      $('#resTime').textContent=fmt(r.serverElapsed);
+      $('#resDiff').textContent='Diferencia: '+r.diff+'ms del objetivo';
+      var b=$('#resBadge');b.textContent=r.status;
+      b.className='badge '+(r.status==='PENDIENTE_REVISION'?'badge-pend':r.status==='SOSPECHOSO'?'badge-sus':'badge-clean');
+      tmr.textContent=fmt(r.serverElapsed);tmr.className='tmr '+(w?'win':'lose');tmr.style.textShadow='none';
+      renderHist();
+      $('#gameScr').classList.remove('on');$('#resScr').classList.add('on');
+    }
+
+    function renderHist(){
+      if(!S.hist.length)return;
+      $('#histWrap').style.display='block';
+      var html='';
+      for(var j=0;j<S.hist.length;j++){
+        var h=S.hist[j];
+        html+='<div class="h-item'+(h.w?' hw':'')+'"><span class="ht">'+fmt(h.t)+'</span><span class="hd">'+(h.w?'\u{1F3C6} ':'')+'\u00b1'+h.d+'ms</span></div>';
+      }
+      $('#histList').innerHTML=html;
+    }
+
+    var aKey='';
+    window.admAuth=function(){
+      aKey=$('#admKey').value;
+      if(!aKey){toast('Ingresa la clave');return}
+      admLoad('all');
+    };
+    function admLoad(f){
+      api('audit','GET',null,'&key='+encodeURIComponent(aKey)+'&filter='+f).then(function(d){
+        $('#admLogin').style.display='none';$('#admBody').style.display='block';
+        renderAdm(d.entries);
+      }).catch(function(e){toast(e.message)});
+    }
+    window.admFlt=function(f,b){
+      document.querySelectorAll('.fbtn').forEach(function(x){x.classList.remove('act')});
+      b.classList.add('act');admLoad(f);
+    };
+    function renderAdm(ents){
+      var tb=$('#admTb');
+      if(!ents||!ents.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:18px">Sin registros</td></tr>';return}
+      var html='';
+      for(var j=0;j<ents.length;j++){
+        var e=ents[j];
+        var sc=(e.status==='SOSPECHOSO'||e.status==='BLOQUEADO')?'var(--red)':(e.status==='PENDIENTE_REVISION'?'var(--gold)':'var(--green)');
+        var t=e.timestamp?new Date(e.timestamp).toLocaleTimeString('es-MX'):'--';
+        html+='<tr><td>'+t+'</td><td title="'+(e.ip||'')+'">'+(e.ip||'--').substring(0,15)+'</td><td>'+(e.serverElapsed||0)+'ms</td><td>'+(e.diff||0)+'ms</td><td>'+(e.clientDrift!=null?e.clientDrift+'ms':'--')+'</td><td>'+(e.isTrustedEvent?'\u2705':'\u274C')+'</td><td style="color:'+sc+';font-weight:700">'+e.status+'</td></tr>';
+      }
+      tb.innerHTML=html;
+    }
+
+    $('#admKey').addEventListener('keydown',function(e){if(e.key==='Enter')window.admAuth()});
+
+    // Speed hack detection
+    var lastChk=Date.now();
+    setInterval(function(){
+      var now=Date.now();
+      if(now-lastChk>5000&&S.phase==='running'){
+        clearInterval(S.iv);S.phase='idle';
+        toast('\u26A0\uFE0F Anomalía temporal. Sesión cancelada.');
+        window.reset();
+      }
+      lastChk=now;
+    },1000);
+
+    calibrate();
+  })();
+  </script>
+</body>
+</html>

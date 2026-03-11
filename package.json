@@ -1,0 +1,9 @@
+{
+  "name": "reto-10-segundos",
+  "version": "1.0.0",
+  "description": "Reto de precisión: detener un cronómetro en exactamente 10 segundos.",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
