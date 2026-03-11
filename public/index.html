@@ -122,6 +122,7 @@
       <div class="cal-txt">Calibrando conexión...</div>
       <div class="cal-det" id="calDet">Midiendo latencia...</div>
     </div>
+    
     <div class="scr" id="gameScr">
       <div class="ping"><div class="ping-dot"></div><span id="pingTxt">Ping: --ms</span></div>
       <div class="target">Objetivo: <b>10.000s</b> ±<b>100ms</b></div>
@@ -129,8 +130,12 @@
         <div class="tmr" id="tmr">00.000</div>
         <div class="tmr-glow"></div>
       </div>
+      
+      <input type="text" id="playerKey" placeholder="Ingresa tu clave para jugar" style="padding: 10px; border-radius: 8px; border: 1px solid var(--bdr); background: var(--card); color: var(--txt); font-family: var(--mono); text-align: center; margin-bottom: 15px; outline: none; width: 100%; max-width: 250px;">
+      
       <button class="btn-go" id="btn" onclick="handleBtn(event)">INICIAR</button>
     </div>
+
     <div class="scr" id="resScr">
       <div class="res-card" id="resCard">
         <div class="res-icon" id="resIcon"></div>
@@ -145,18 +150,13 @@
         <div class="hist-list" id="histList"></div>
       </div>
     </div>
-  <div class="scr" id="gameScr">
-      <div class="ping"><div class="ping-dot"></div><span id="pingTxt">Ping: --ms</span></div>
-      <div class="target">Objetivo: <b>10.000s</b> ±<b>100ms</b></div>
-      <div class="tmr-wrap">
-        <div class="tmr" id="tmr">00.000</div>
-        <div class="tmr-glow"></div>
+
+    <div class="scr" id="admScr">
+      <div class="adm-hdr"><h2>Panel de Auditoría</h2></div>
+      <div class="adm-login" id="admLogin">
+        <input type="password" id="admKey" placeholder="Clave de administración">
+        <button onclick="admAuth()">Entrar</button>
       </div>
-      
-      <input type="text" id="playerKey" placeholder="Ingresa tu clave" style="padding: 10px; border-radius: 8px; border: 1px solid var(--bdr); background: var(--card); color: var(--txt); font-family: var(--mono); text-align: center; margin-bottom: 15px; outline: none; width: 100%; max-width: 250px;">
-      
-      <button class="btn-go" id="btn" onclick="handleBtn(event)">INICIAR</button>
-    </div>
       <div id="admBody" style="display:none;width:100%">
         <div class="adm-flt">
           <button class="fbtn act" onclick="admFlt('all',this)">Todos</button>
@@ -166,7 +166,7 @@
         </div>
         <div class="adm-tw">
           <table class="adm-tbl">
-            <thead><tr><th>Hora</th><th>IP</th><th>Tiempo</th><th>Dif.</th><th>Drift</th><th>Trust</th><th>Status</th></tr></thead>
+            <thead><tr><th>Hora</th><th>Jugador</th><th>IP</th><th>Tiempo</th><th>Dif.</th><th>Drift</th><th>Trust</th><th>Status</th></tr></thead>
             <tbody id="admTb"></tbody>
           </table>
         </div>
@@ -187,7 +187,6 @@
 
     function toast(m,d){d=d||3000;var t=$('#toast');t.textContent=m;t.classList.add('vis');setTimeout(function(){t.classList.remove('vis')},d)}
     function fmt(ms){var s=Math.floor(ms/1000).toString();while(s.length<2)s='0'+s;var m=Math.floor(ms%1000).toString();while(m.length<3)m='0'+m;return s+'.'+m}
-    function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
 
     function api(act,method,body,p){
       method=method||'GET';p=p||'';
@@ -221,6 +220,7 @@
       tmr.style.textShadow='none';
       $('#gameScr').classList.add('on');$('#resScr').classList.remove('on');
       $('#nGame').classList.add('act');
+      $('#playerKey').value = ''; // Limpiar la clave anterior
     };
 
     function calibrate(){
@@ -245,7 +245,7 @@
           i++;next();
         }).catch(function(){
           fails++;
-          if(fails>8){det.textContent='No se pudo conectar.';toast('Error de conexión');return}
+          if(fails>8){det.textContent='Error al conectar con la base de datos.';toast('Error de conexión');return}
           setTimeout(next,800);
         });
       }
@@ -263,7 +263,6 @@
       if(!pKey) { toast('Por favor ingresa tu clave para jugar'); return; }
 
       btn.disabled=true;btn.textContent='...';
-      // Enviamos la clave al servidor
       api('start','POST', { key: pKey }).then(function(d){
         S.token=d.token;S.t0=performance.now();S.phase='running';
         btn.disabled=false;btn.textContent='DETENER';btn.classList.add('run');
@@ -339,7 +338,6 @@
         var e=ents[j];
         var sc=(e.status==='SOSPECHOSO')?'var(--red)':(e.status==='PENDIENTE_REVISION'?'var(--gold)':'var(--green)');
         var t=e.timestamp?new Date(e.timestamp).toLocaleTimeString('es-MX'):'--';
-        // Agregamos la columna de la clave aquí
         html+='<tr><td>'+t+'</td><td style="color:var(--cyan);font-weight:bold;">'+(e.playerKey||'--')+'</td><td title="'+(e.ip||'')+'">'+(e.ip||'--').substring(0,15)+'</td><td>'+(e.serverElapsed||0)+'ms</td><td>'+(e.diff||0)+'ms</td><td>'+(e.clientDrift!=null?e.clientDrift+'ms':'--')+'</td><td>'+(e.isTrustedEvent?'\u2705':'\u274C')+'</td><td style="color:'+sc+';font-weight:700">'+e.status+'</td></tr>';
       }
       tb.innerHTML=html;
@@ -347,7 +345,6 @@
 
     $('#admKey').addEventListener('keydown',function(e){if(e.key==='Enter')window.admAuth()});
 
-    // Speed hack detection
     var lastChk=Date.now();
     setInterval(function(){
       var now=Date.now();
