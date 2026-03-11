@@ -145,12 +145,18 @@
         <div class="hist-list" id="histList"></div>
       </div>
     </div>
-    <div class="scr" id="admScr">
-      <div class="adm-hdr"><h2>Panel de Auditoría</h2></div>
-      <div class="adm-login" id="admLogin">
-        <input type="password" id="admKey" placeholder="Clave de administración">
-        <button onclick="admAuth()">Entrar</button>
+  <div class="scr" id="gameScr">
+      <div class="ping"><div class="ping-dot"></div><span id="pingTxt">Ping: --ms</span></div>
+      <div class="target">Objetivo: <b>10.000s</b> ±<b>100ms</b></div>
+      <div class="tmr-wrap">
+        <div class="tmr" id="tmr">00.000</div>
+        <div class="tmr-glow"></div>
       </div>
+      
+      <input type="text" id="playerKey" placeholder="Ingresa tu clave" style="padding: 10px; border-radius: 8px; border: 1px solid var(--bdr); background: var(--card); color: var(--txt); font-family: var(--mono); text-align: center; margin-bottom: 15px; outline: none; width: 100%; max-width: 250px;">
+      
+      <button class="btn-go" id="btn" onclick="handleBtn(event)">INICIAR</button>
+    </div>
       <div id="admBody" style="display:none;width:100%">
         <div class="adm-flt">
           <button class="fbtn act" onclick="admFlt('all',this)">Todos</button>
@@ -253,8 +259,12 @@
     };
 
     function doStart(tr){
+      var pKey = $('#playerKey').value.trim();
+      if(!pKey) { toast('Por favor ingresa tu clave para jugar'); return; }
+
       btn.disabled=true;btn.textContent='...';
-      api('start','POST').then(function(d){
+      // Enviamos la clave al servidor
+      api('start','POST', { key: pKey }).then(function(d){
         S.token=d.token;S.t0=performance.now();S.phase='running';
         btn.disabled=false;btn.textContent='DETENER';btn.classList.add('run');
         tmr.classList.add('run');
@@ -323,13 +333,14 @@
     };
     function renderAdm(ents){
       var tb=$('#admTb');
-      if(!ents||!ents.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:18px">Sin registros</td></tr>';return}
+      if(!ents||!ents.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--dim);padding:18px">Sin registros</td></tr>';return}
       var html='';
       for(var j=0;j<ents.length;j++){
         var e=ents[j];
-        var sc=(e.status==='SOSPECHOSO'||e.status==='BLOQUEADO')?'var(--red)':(e.status==='PENDIENTE_REVISION'?'var(--gold)':'var(--green)');
+        var sc=(e.status==='SOSPECHOSO')?'var(--red)':(e.status==='PENDIENTE_REVISION'?'var(--gold)':'var(--green)');
         var t=e.timestamp?new Date(e.timestamp).toLocaleTimeString('es-MX'):'--';
-        html+='<tr><td>'+t+'</td><td title="'+(e.ip||'')+'">'+(e.ip||'--').substring(0,15)+'</td><td>'+(e.serverElapsed||0)+'ms</td><td>'+(e.diff||0)+'ms</td><td>'+(e.clientDrift!=null?e.clientDrift+'ms':'--')+'</td><td>'+(e.isTrustedEvent?'\u2705':'\u274C')+'</td><td style="color:'+sc+';font-weight:700">'+e.status+'</td></tr>';
+        // Agregamos la columna de la clave aquí
+        html+='<tr><td>'+t+'</td><td style="color:var(--cyan);font-weight:bold;">'+(e.playerKey||'--')+'</td><td title="'+(e.ip||'')+'">'+(e.ip||'--').substring(0,15)+'</td><td>'+(e.serverElapsed||0)+'ms</td><td>'+(e.diff||0)+'ms</td><td>'+(e.clientDrift!=null?e.clientDrift+'ms':'--')+'</td><td>'+(e.isTrustedEvent?'\u2705':'\u274C')+'</td><td style="color:'+sc+';font-weight:700">'+e.status+'</td></tr>';
       }
       tb.innerHTML=html;
     }
