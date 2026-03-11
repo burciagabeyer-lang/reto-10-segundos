@@ -2,95 +2,524 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Reto 10 Segundos</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;700&display=swap">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0a0a0c; --card: #141417; --cyan: #00f2ff; --green: #00ff88; --red: #ff3e3e; --gold: #ffcc00; --dim: #888; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .scr { display: none; min-height: 100vh; padding: 20px; flex-direction: column; align-items: center; justify-content: center; }
+        :root {
+            --bg: #09090b;
+            --surface: #111113;
+            --surface-2: #18181b;
+            --border: #27272a;
+            --text: #fafafa;
+            --text-2: #a1a1aa;
+            --text-3: #52525b;
+            --amber: #f59e0b;
+            --amber-dim: rgba(245,158,11,0.1);
+            --green: #22c55e;
+            --green-dim: rgba(34,197,94,0.08);
+            --red: #ef4444;
+            --red-dim: rgba(239,68,68,0.08);
+            --ring-base: #27272a;
+            --mono: 'IBM Plex Mono', monospace;
+            --body: 'Sora', sans-serif;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--body);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ═══ SCREENS ═══ */
+        .scr {
+            display: none;
+            min-height: 100vh;
+            padding: 24px 20px 100px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
         .scr.on { display: flex; }
-        .container { width: 100%; max-width: 400px; text-align: center; }
-        
-        /* Juego */
-        .target { font-size: 1.2rem; margin-bottom: 20px; color: var(--dim); }
-        .target b { color: #fff; }
-        .tmr { font-family: 'Orbitron', sans-serif; font-size: 4rem; margin: 30px 0; font-weight: 700; transition: all 0.2s; }
-        .tmr.run { color: var(--cyan); }
+
+        /* ═══ CALIBRATION ═══ */
+        #calScr .container { text-align: center; }
+        #calScr h2 {
+            font-weight: 300;
+            font-size: 1.1rem;
+            letter-spacing: 0.08em;
+            color: var(--text-2);
+            animation: fadeInUp 0.6s ease;
+        }
+        #calDet {
+            color: var(--text-3);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            font-weight: 400;
+        }
+        .cal-dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .cal-dots span {
+            width: 4px; height: 4px;
+            background: var(--text-3);
+            border-radius: 50%;
+            animation: calPulse 1.2s ease infinite;
+        }
+        .cal-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .cal-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes calPulse {
+            0%,100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* ═══ CONTAINER ═══ */
+        .container {
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        /* ═══ PRIZE BADGE ═══ */
+        .prize {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--amber-dim);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 100px;
+            padding: 8px 20px;
+            margin-bottom: 32px;
+            animation: fadeInUp 0.5s ease;
+        }
+        .prize-dot {
+            width: 6px; height: 6px;
+            background: var(--amber);
+            border-radius: 50%;
+            animation: prizePulse 2s ease infinite;
+        }
+        @keyframes prizePulse {
+            0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(245,158,11,0); }
+        }
+        .prize-text {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--amber);
+            letter-spacing: 0.04em;
+        }
+
+        /* ═══ OBJECTIVE ═══ */
+        .objective {
+            color: var(--text-3);
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+            animation: fadeInUp 0.5s ease 0.1s both;
+        }
+        .objective b {
+            color: var(--text-2);
+            font-weight: 500;
+        }
+
+        /* ═══ PROGRESS RING ═══ */
+        .ring-wrap {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 24px auto;
+            animation: fadeInUp 0.6s ease 0.15s both;
+        }
+        .ring-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        .ring-bg {
+            fill: none;
+            stroke: var(--ring-base);
+            stroke-width: 2;
+        }
+        .ring-fill {
+            fill: none;
+            stroke: var(--text-3);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-dasharray: 816;
+            stroke-dashoffset: 816;
+            transition: stroke 0.3s ease;
+        }
+        .ring-fill.near { stroke: var(--amber); }
+        .ring-fill.over { stroke: var(--red); }
+        .ring-fill.win { stroke: var(--green); }
+
+        .ring-inner {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ═══ TIMER ═══ */
+        .tmr {
+            font-family: var(--mono);
+            font-size: 3.6rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            line-height: 1;
+            transition: color 0.3s, transform 0.2s;
+        }
+        .tmr.run { color: var(--text); }
         .tmr.win { color: var(--green); }
         .tmr.lose { color: var(--red); }
-        
-        input { width: 100%; padding: 15px; background: #000; border: 2px solid #333; border-radius: 12px; color: #fff; font-size: 1rem; text-align: center; margin-bottom: 20px; outline: none; }
-        input:focus { border-color: var(--cyan); }
-        
-        button { width: 100%; padding: 18px; border-radius: 12px; border: none; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: transform 0.1s; }
-        .btn-go { background: var(--cyan); color: #000; }
-        .btn-go.run { background: var(--red); color: #fff; }
-        button:active { transform: scale(0.96); }
 
-        /* Admin Tools */
-        .adm-tools { background: #1a1a1f; padding: 20px; border-radius: 15px; margin-bottom: 20px; width: 100%; }
-        .gen-box { display: flex; gap: 10px; margin-bottom: 10px; }
-        .btn-gen { background: var(--cyan); color: #000; flex: 2; }
-        .btn-dl { background: var(--green); color: #000; margin-top: 10px; }
-        #genCount { width: 80px; margin-bottom: 0; }
+        .tmr-label {
+            font-size: 0.65rem;
+            color: var(--text-3);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
 
-        /* Tabla */
-        .tb-wrap { width: 100%; overflow-x: auto; background: var(--card); border-radius: 12px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #222; }
-        th { color: var(--dim); font-weight: normal; }
+        /* Shake animation for lose */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+            20%, 40%, 60%, 80% { transform: translateX(4px); }
+        }
+        .tmr.shake { animation: shake 0.5s ease; }
 
-        .nav { position: fixed; bottom: 0; width: 100%; background: #141417; display: flex; border-top: 1px solid #222; }
-        .nav-b { flex: 1; padding: 15px; text-align: center; color: var(--dim); cursor: pointer; font-weight: bold; }
-        .nav-b.act { color: var(--cyan); border-top: 2px solid var(--cyan); }
-        #toast { position: fixed; top: 20px; background: var(--red); padding: 12px 24px; border-radius: 8px; transform: translateY(-100px); transition: 0.4s; z-index: 1000; }
-        #toast.vis { transform: translateY(0); }
+        /* ═══ KEY INPUT ═══ */
+        .key-section {
+            animation: fadeInUp 0.5s ease 0.2s both;
+        }
+        .key-label {
+            font-size: 0.7rem;
+            color: var(--text-3);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 16px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: var(--mono);
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            outline: none;
+            transition: border-color 0.2s;
+            margin-bottom: 16px;
+        }
+        input:focus { border-color: var(--text-3); }
+        input::placeholder {
+            color: var(--text-3);
+            font-family: var(--body);
+            font-size: 0.85rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            text-transform: none;
+        }
+
+        /* ═══ BUTTONS ═══ */
+        button {
+            width: 100%;
+            padding: 16px 24px;
+            border-radius: 12px;
+            border: none;
+            font-family: var(--body);
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        button:active { transform: scale(0.97); }
+        button:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+        .btn-go {
+            background: var(--text);
+            color: var(--bg);
+        }
+        .btn-go:hover:not(:disabled) {
+            box-shadow: 0 4px 24px rgba(250,250,250,0.1);
+        }
+        .btn-go.run {
+            background: var(--red);
+            color: white;
+            animation: btnTension 1.5s ease-in-out infinite;
+        }
+        @keyframes btnTension {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.3); }
+            50% { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+        }
+
+        /* ═══ STATUS BAR ═══ */
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            animation: fadeInUp 0.5s ease 0.3s both;
+        }
+        .stat { text-align: center; }
+        .stat-label {
+            font-size: 0.6rem;
+            color: var(--text-3);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        .stat-value {
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-2);
+            margin-top: 4px;
+        }
+
+        /* ═══ TOAST ═══ */
+        #toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 1000;
+            transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+            white-space: nowrap;
+            max-width: 90vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #toast.vis { transform: translateX(-50%) translateY(0); }
+
+        /* ═══ CONFETTI CANVAS ═══ */
+        #confetti {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        /* ═══ ADMIN ═══ */
+        #admScr .container { max-width: 600px; }
+        .adm-tools {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        .adm-tools h3 {
+            font-size: 0.7rem;
+            color: var(--text-3);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 14px;
+        }
+        .gen-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        #genCount {
+            width: 80px;
+            margin-bottom: 0;
+            padding: 12px;
+            font-size: 0.85rem;
+        }
+        .btn-gen {
+            flex: 2;
+            background: var(--text);
+            color: var(--bg);
+            padding: 12px;
+            font-size: 0.85rem;
+        }
+        .btn-dl {
+            background: var(--green-dim);
+            color: var(--green);
+            border: 1px solid rgba(34,197,94,0.2);
+            margin-top: 10px;
+            padding: 12px;
+            font-size: 0.85rem;
+        }
+
+        .tb-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow-x: auto;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        th {
+            text-align: left;
+            padding: 14px 16px;
+            color: var(--text-3);
+            font-size: 0.65rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 500;
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 12px 16px;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            border-bottom: 1px solid rgba(39,39,42,0.5);
+            color: var(--text-2);
+        }
+
+        /* ═══ NAV ═══ */
+        .nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            z-index: 50;
+        }
+        .nav-b {
+            flex: 1;
+            padding: 16px;
+            text-align: center;
+            color: var(--text-3);
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            transition: color 0.2s;
+        }
+        .nav-b.act {
+            color: var(--text);
+        }
+
+        /* ═══ ANIMATIONS ═══ */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 380px) {
+            .tmr { font-size: 2.8rem; }
+            .ring-wrap { width: 240px; height: 240px; }
+        }
     </style>
 </head>
 <body>
-    <div id="toast">Error</div>
 
+    <div id="toast">Error</div>
+    <canvas id="confetti"></canvas>
+
+    <!-- ═══ CALIBRATION ═══ -->
     <div id="calScr" class="scr on">
         <div class="container">
-            <h2 style="margin-bottom:10px">Iniciando...</h2>
-            <p id="calDet" style="color:var(--dim)">Conectando con el servidor...</p>
+            <h2>Conectando</h2>
+            <p id="calDet">Preparando el reto...</p>
+            <div class="cal-dots"><span></span><span></span><span></span></div>
         </div>
     </div>
 
+    <!-- ═══ GAME ═══ -->
     <div id="gameScr" class="scr">
         <div class="container">
-            <div class="target">Objetivo: <b>10.00 segundos</b></div>
-            <div id="tmr" class="tmr">00.000</div>
-            <input type="text" id="playerKey" placeholder="Ingresa tu clave de acceso">
-            <button id="btn" class="btn-go" onclick="handleBtn(event)">INICIAR</button>
+
+            <div class="prize">
+                <div class="prize-dot"></div>
+                <span class="prize-text">$200 EN JUEGO</span>
+            </div>
+
+            <div class="objective">Detén el reloj exactamente en <b>10.000s</b></div>
+
+            <div class="ring-wrap">
+                <svg class="ring-svg" viewBox="0 0 280 280">
+                    <circle class="ring-bg" cx="140" cy="140" r="130" />
+                    <circle class="ring-fill" id="ringFill" cx="140" cy="140" r="130" />
+                </svg>
+                <div class="ring-inner">
+                    <div class="tmr-label">TIEMPO</div>
+                    <div id="tmr" class="tmr">00.000</div>
+                </div>
+            </div>
+
+            <div class="key-section">
+                <div class="key-label">Código de acceso</div>
+                <input type="text" id="playerKey" placeholder="Ingresa tu clave" autocomplete="off">
+            </div>
+
+            <button id="btn" class="btn-go" onclick="handleBtn(event)">INICIAR RETO</button>
+
+            <div class="status-bar">
+                <div class="stat">
+                    <div class="stat-label">Objetivo</div>
+                    <div class="stat-value">10.000s</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Tolerancia</div>
+                    <div class="stat-value">±100ms</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Premio</div>
+                    <div class="stat-value" style="color:var(--amber)">$200</div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- ═══ ADMIN ═══ -->
     <div id="admScr" class="scr">
-        <div class="container" style="max-width: 600px;">
+        <div class="container" style="max-width:600px;">
             <div id="admLogin">
-                <input type="password" id="admKey" placeholder="Clave de Admin">
-                <button class="btn-go" onclick="admAuth()">Entrar al Panel</button>
+                <div class="key-label" style="margin-bottom:14px;">Panel de administración</div>
+                <input type="password" id="admKey" placeholder="Contraseña">
+                <button class="btn-go" onclick="admAuth()">Acceder</button>
             </div>
-            <div id="admBody" style="display:none; width: 100%;">
+            <div id="admBody" style="display:none;width:100%;">
                 <div class="adm-tools">
+                    <h3>Generar claves</h3>
                     <div class="gen-box">
                         <input type="number" id="genCount" value="10" min="1">
-                        <button class="btn-gen" onclick="generateKeys()">Generar Claves</button>
+                        <button class="btn-gen" onclick="generateKeys()">Generar</button>
                     </div>
-                    <button id="btnDl" class="btn-dl" style="display:none;" onclick="downloadKeys()">⬇️ Descargar .TXT</button>
+                    <button id="btnDl" class="btn-dl" style="display:none;" onclick="downloadKeys()">Descargar .TXT</button>
                 </div>
                 <div class="tb-wrap">
                     <table>
                         <thead>
-                            <tr>
-                                <th>Clave</th>
-                                <th>Tiempo</th>
-                                <th>Dif</th>
-                                <th>Status</th>
-                            </tr>
+                            <tr><th>Clave</th><th>Tiempo</th><th>Dif</th><th>Status</th></tr>
                         </thead>
                         <tbody id="admTb"></tbody>
                     </table>
@@ -103,6 +532,244 @@
         <div id="nGame" class="nav-b act" onclick="navTo('game')">JUEGO</div>
         <div id="nAdmin" class="nav-b" onclick="navTo('admin')">ADMIN</div>
     </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- VISUAL EFFECTS ENGINE                                   -->
+    <!-- Observa cambios en #tmr para activar efectos            -->
+    <!-- No modifica script.js — solo reacciona al DOM           -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <script>
+    !function(){
+        var ring = document.getElementById('ringFill');
+        var tmr = document.getElementById('tmr');
+        var canvas = document.getElementById('confetti');
+        var ctx = canvas.getContext('2d');
+        var CIRC = 2 * Math.PI * 130; // circumference of r=130
+        ring.style.strokeDasharray = CIRC;
+        ring.style.strokeDashoffset = CIRC;
+
+        // ── Audio engine (Web Audio API) ──
+        var audioCtx = null;
+        var oscNode = null;
+        var gainNode = null;
+        var soundPlaying = false;
+
+        function startTensionSound(){
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                oscNode = audioCtx.createOscillator();
+                gainNode = audioCtx.createGain();
+                oscNode.type = 'sine';
+                oscNode.frequency.value = 180;
+                gainNode.gain.value = 0.04;
+                oscNode.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscNode.start();
+                soundPlaying = true;
+            } catch(e){}
+        }
+
+        function updateTensionSound(seconds){
+            if (!soundPlaying || !oscNode) return;
+            try {
+                // Frequency ramps from 180Hz to 600Hz over 10s, then stays high
+                var t = Math.min(seconds / 10, 1);
+                var freq = 180 + (t * t * 420); // Quadratic ramp — accelerates
+                oscNode.frequency.value = freq;
+
+                // Volume ramps from 0.04 to 0.12
+                var vol = 0.04 + (t * 0.08);
+                gainNode.gain.value = Math.min(vol, 0.15);
+            } catch(e){}
+        }
+
+        function stopSound(){
+            try {
+                if (oscNode) { oscNode.stop(); oscNode = null; }
+                if (gainNode) { gainNode = null; }
+                soundPlaying = false;
+            } catch(e){}
+        }
+
+        function playWinSound(){
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                // Ascending triad
+                [523, 659, 784].forEach(function(f, i){
+                    var o = audioCtx.createOscillator();
+                    var g = audioCtx.createGain();
+                    o.type = 'sine';
+                    o.frequency.value = f;
+                    g.gain.value = 0.08;
+                    g.gain.setValueAtTime(0.08, audioCtx.currentTime + i*0.15);
+                    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i*0.15 + 0.5);
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.start(audioCtx.currentTime + i*0.15);
+                    o.stop(audioCtx.currentTime + i*0.15 + 0.5);
+                });
+            } catch(e){}
+        }
+
+        function playLoseSound(){
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                var o = audioCtx.createOscillator();
+                var g = audioCtx.createGain();
+                o.type = 'sawtooth';
+                o.frequency.value = 150;
+                g.gain.value = 0.06;
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+                o.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.4);
+                o.connect(g);
+                g.connect(audioCtx.destination);
+                o.start();
+                o.stop(audioCtx.currentTime + 0.4);
+            } catch(e){}
+        }
+
+        // ── Progress ring updater ──
+        var ringAnim = null;
+        var gameActive = false;
+
+        function startRing(){
+            gameActive = true;
+            ring.classList.remove('near','over','win');
+            startTensionSound();
+            updateRing();
+        }
+
+        function updateRing(){
+            if (!gameActive) return;
+            // Read time from the timer text
+            var txt = tmr.textContent || '00.000';
+            var parts = txt.split('.');
+            var secs = parseInt(parts[0]) || 0;
+            var ms = parseInt(parts[1]) || 0;
+            var total = secs + ms / 1000;
+
+            // Progress: fills over 14 seconds (max visible range)
+            var progress = Math.min(total / 14, 1);
+            ring.style.strokeDashoffset = CIRC - (progress * CIRC);
+
+            // Color zones
+            ring.classList.remove('near','over');
+            if (total >= 9 && total <= 11) ring.classList.add('near');
+            if (total > 11) ring.classList.add('over');
+
+            // Update tension sound
+            updateTensionSound(total);
+
+            ringAnim = requestAnimationFrame(updateRing);
+        }
+
+        function stopRing(isWin){
+            gameActive = false;
+            if (ringAnim) { cancelAnimationFrame(ringAnim); ringAnim = null; }
+            stopSound();
+            if (isWin) ring.classList.add('win');
+        }
+
+        function resetRing(){
+            ring.style.strokeDashoffset = CIRC;
+            ring.classList.remove('near','over','win');
+        }
+
+        // ── Confetti engine ──
+        var particles = [];
+        var confettiActive = false;
+
+        function resizeCanvas(){
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function fireConfetti(){
+            particles = [];
+            var colors = ['#f59e0b','#22c55e','#fafafa','#eab308','#a3e635','#fbbf24'];
+            for (var i = 0; i < 120; i++){
+                particles.push({
+                    x: canvas.width / 2 + (Math.random()-0.5)*100,
+                    y: canvas.height * 0.4,
+                    vx: (Math.random()-0.5) * 14,
+                    vy: -Math.random() * 16 - 4,
+                    w: Math.random()*8+3,
+                    h: Math.random()*6+2,
+                    color: colors[Math.floor(Math.random()*colors.length)],
+                    rotation: Math.random()*360,
+                    rv: (Math.random()-0.5)*12,
+                    gravity: 0.25 + Math.random()*0.1,
+                    life: 1,
+                    decay: 0.006 + Math.random()*0.006
+                });
+            }
+            confettiActive = true;
+            animateConfetti();
+        }
+
+        function animateConfetti(){
+            if (!confettiActive) return;
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            var alive = false;
+            for (var i = 0; i < particles.length; i++){
+                var p = particles[i];
+                if (p.life <= 0) continue;
+                alive = true;
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += p.gravity;
+                p.vx *= 0.99;
+                p.rotation += p.rv;
+                p.life -= p.decay;
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation * Math.PI / 180);
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                ctx.restore();
+            }
+            if (alive) requestAnimationFrame(animateConfetti);
+            else { confettiActive = false; ctx.clearRect(0,0,canvas.width,canvas.height); }
+        }
+
+        // ── Observe #tmr class changes ──
+        var observer = new MutationObserver(function(mutations){
+            mutations.forEach(function(m){
+                if (m.attributeName !== 'class') return;
+                var cl = tmr.classList;
+
+                if (cl.contains('run') && !gameActive){
+                    startRing();
+                }
+
+                if (cl.contains('win')){
+                    stopRing(true);
+                    playWinSound();
+                    fireConfetti();
+                }
+
+                if (cl.contains('lose')){
+                    stopRing(false);
+                    playLoseSound();
+                    tmr.classList.add('shake');
+                    setTimeout(function(){ tmr.classList.remove('shake'); }, 500);
+                }
+
+                if (!cl.contains('run') && !cl.contains('win') && !cl.contains('lose')){
+                    // Reset state
+                    stopRing(false);
+                    resetRing();
+                }
+            });
+        });
+
+        observer.observe(tmr, { attributes: true });
+    }();
+    </script>
 
     <script src="/script.js"></script>
 </body>
