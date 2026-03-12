@@ -1,1 +1,253 @@
-!function(){var e="/api/v1-secure-engine-x92",t={phase:"idle",token:null,t0:null,iv:null,autoStop:null,keys:[]},n="",a=function(e){return document.querySelector(e)};function o(e){var t=a("#toast");t.textContent=e,t.classList.add("vis"),setTimeout(function(){t.classList.remove("vis")},3500)}function r(e){var t=Math.max(0,e),n=Math.floor(t/1e3),a=Math.floor(t%1e3/10);return n.toString().padStart(2,"0")+"."+a.toString().padStart(2,"0")}function s(t,n,a,o){return fetch(e+"?action="+t+(o||""),{method:n||"GET",headers:{"Content-Type":"application/json"},body:a?JSON.stringify(a):null}).then(function(e){return e.json().then(function(t){if(!e.ok)throw new Error(t.error||"Error");return t})})}function i(e,n){if("running"===t.phase){t.phase="stopped",t.iv&&(clearInterval(t.iv),t.iv=null),t.autoStop&&(clearTimeout(t.autoStop),t.autoStop=null);var i=Math.round(performance.now()-t.t0);a("#btn").disabled=!0,a("#btn").textContent=n?"⏰ TIEMPO AGOTADO":"VERIFICANDO...",s("stop","POST",{token:t.token,isTrusted:!n&&!0===e,clientElapsed:i}).then(function(e){a("#tmr").textContent=r(e.serverElapsed),c(e,n)}).catch(function(e){o(e.message),c({serverElapsed:i,diff:Math.abs(i-1e4),isWinner:!1,status:"ERROR"},n)})}}function c(e,n){var o=a("#tmr"),r=a("#btn");o.classList.remove("run"),e.isWinner?o.classList.add("win"):o.classList.add("lose"),t.token=null,t.phase="idle",r.classList.remove("run"),r.textContent="JUGAR DE NUEVO",r.disabled=!1,r.onclick=function(){o.textContent="00.00",o.classList.remove("run","win","lose"),a("#playerKey").style.display="block",a("#playerKey").value="",r.textContent="INICIAR RETO",r.classList.remove("run"),r.onclick=null}}function l(e){var t=a("#admTb");e.length?t.innerHTML=e.map(function(e){var t=e.serverElapsed?(e.serverElapsed/1e3).toFixed(3)+"s":"—",n=void 0!==e.diff?e.diff+"ms":"—",a={GANADOR_PENDIENTE:"var(--green,#22c55e)",REVISION_MANUAL:"var(--amber,#f59e0b)",SOSPECHOSO:"var(--red,#ef4444)",EXPIRADO:"var(--red,#ef4444)",REPLAY_DETECTADO:"var(--red,#ef4444)",LIMPIO:"var(--text-3,#888)"}[e.status]||"var(--text-3,#888)",o=e.playerKey?e.playerKey.slice(0,6)+"..":"—",r=e.flags&&e.flags.length?" ⚠":"";return"<tr><td>"+o+"</td><td>"+t+"</td><td>"+n+'</td><td style="color:'+a+';font-weight:bold">'+e.status+r+"</td></tr>"}).join(""):t.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--dim,#888)">Sin registros</td></tr>'}document.addEventListener("contextmenu",function(e){e.preventDefault()}),document.onkeydown=function(e){if(123===e.keyCode||e.ctrlKey&&e.shiftKey&&(73===e.keyCode||74===e.keyCode)||e.ctrlKey&&85===e.keyCode)return!1},document.addEventListener("keydown",function(e){"Space"===e.code&&!e.repeat&&a("#gameScr").classList.contains("on")&&(e.preventDefault(),a("#btn").disabled||handleBtn(e))}),window.navTo=function(e){document.querySelectorAll(".scr").forEach(function(e){e.classList.remove("on")}),document.querySelectorAll(".nav-b").forEach(function(e){e.classList.remove("act")}),"game"===e?(a("#gameScr").classList.add("on"),a("#nGame").classList.add("act")):(a("#admScr").classList.add("on"),a("#nAdmin").classList.add("act"))},window.handleBtn=function(e){if("idle"===t.phase){var n=a("#playerKey").value.trim();if(!n)return o("Ingresa tu clave de acceso");a("#btn").disabled=!0,a("#btn").textContent="VALIDANDO...",s("start","POST",{key:n}).then(function(e){t.token=e.token,t.t0=performance.now(),t.phase="running",a("#btn").disabled=!1,a("#btn").textContent="¡DETENER!",a("#btn").classList.add("run"),a("#tmr").classList.add("run"),a("#tmr").classList.remove("win","lose"),a("#playerKey").style.display="none",t.iv=setInterval(function(){"running"===t.phase&&(a("#tmr").textContent=r(performance.now()-t.t0))},16),t.autoStop=setTimeout(function(){"running"===t.phase&&i(!1,!0)},14500)}).catch(function(e){o(e.message),a("#btn").disabled=!1,a("#btn").textContent="INICIAR RETO"})}else if("running"===t.phase){if(performance.now()-t.t0<3e3)return o("Espera un poco más...");i(!!e&&e.isTrusted,!1)}},window.addEventListener("beforeunload",function(){"running"===t.phase&&t.token&&navigator.sendBeacon(e+"?action=stop",new Blob([JSON.stringify({token:t.token,isTrusted:!1,clientElapsed:Math.round(performance.now()-t.t0)})],{type:"application/json"}))}),window.admAuth=function(){if(!(n=a("#admKey").value.trim()))return o("Ingresa la clave de admin");s("audit","GET",null,"&key="+encodeURIComponent(n)).then(function(e){a("#admLogin").style.display="none",a("#admBody").style.display="block",l(e.entries||[])}).catch(function(e){o(e.message)})},window.generateKeys=function(){var e=a("#genCount").value||10;s("gen","GET",null,"&key="+encodeURIComponent(n)+"&count="+e).then(function(e){t.keys=e.keys||[],a("#btnDl").style.display="block",o("✅ "+t.keys.length+" claves generadas"),s("audit","GET",null,"&key="+encodeURIComponent(n)).then(function(e){l(e.entries||[])})}).catch(function(e){o(e.message)})},window.downloadKeys=function(){if(!t.keys.length)return o("No hay claves");var e=document.createElement("a");e.href=URL.createObjectURL(new Blob([t.keys.join("\n")],{type:"text/plain"})),e.download="claves_"+(new Date).toISOString().slice(0,10)+".txt",e.click()},s("ping").then(function(){a("#calScr").classList.remove("on"),a("#gameScr").classList.add("on")}).catch(function(){a("#calDet").textContent="Error al conectar. Recarga la página."})}();
+!function(){
+  var API = '/api/v1-secure-engine-x92';
+  var state = {
+    phase: 'idle',
+    token: null,
+    t0: null,
+    iv: null,
+    autoStop: null,
+    keys: []
+  };
+  var admKey = '';
+  var $ = function(s){ return document.querySelector(s); };
+
+  function toast(msg){
+    var t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('vis');
+    setTimeout(function(){ t.classList.remove('vis'); }, 3500);
+  }
+
+  // ══════════════════════════════════════
+  // FORMAT: 2 decimals — XX.XX
+  // ══════════════════════════════════════
+  function fmt(ms){
+    var s = Math.max(0, ms);
+    var secs = Math.floor(s / 1000);
+    var cents = Math.floor((s % 1000) / 10); // centiseconds (2 digits)
+    return secs.toString().padStart(2,'0') + '.' + cents.toString().padStart(2,'0');
+  }
+
+  function call(action, method, body, extra){
+    return fetch(API + '?action=' + action + (extra||''), {
+      method: method || 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : null
+    }).then(function(r){
+      return r.json().then(function(d){
+        if (!r.ok) throw new Error(d.error || 'Error');
+        return d;
+      });
+    });
+  }
+
+  // Anti-tamper
+  document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+  document.onkeydown = function(e){
+    if (e.keyCode===123 || (e.ctrlKey&&e.shiftKey&&(e.keyCode===73||e.keyCode===74)) || (e.ctrlKey&&e.keyCode===85)) return false;
+  };
+  document.addEventListener('keydown', function(e){
+    if (e.code==='Space' && !e.repeat && $('#gameScr').classList.contains('on')){
+      e.preventDefault();
+      var b = $('#btn');
+      if (!b.disabled) handleBtn(e);
+    }
+  });
+
+  // Nav
+  window.navTo = function(scr){
+    document.querySelectorAll('.scr').forEach(function(s){ s.classList.remove('on'); });
+    document.querySelectorAll('.nav-b').forEach(function(b){ b.classList.remove('act'); });
+    if (scr==='game'){ $('#gameScr').classList.add('on'); $('#nGame').classList.add('act'); }
+    else { $('#admScr').classList.add('on'); $('#nAdmin').classList.add('act'); }
+  };
+
+  // ═══════════════════════════════════════════════════════════
+  // GAME
+  // ═══════════════════════════════════════════════════════════
+  window.handleBtn = function handleBtn(evt){
+    if (state.phase === 'idle'){
+      var key = $('#playerKey').value.trim();
+      if (!key) return toast('Ingresa tu clave de acceso');
+      $('#btn').disabled = true;
+      $('#btn').textContent = 'VALIDANDO...';
+
+      call('start','POST',{ key: key })
+        .then(function(d){
+          state.token = d.token;
+          state.t0 = performance.now();
+          state.phase = 'running';
+          $('#btn').disabled = false;
+          $('#btn').textContent = '¡DETENER!';
+          $('#btn').classList.add('run');
+          $('#tmr').classList.add('run');
+          $('#tmr').classList.remove('win','lose');
+          $('#playerKey').style.display = 'none';
+          
+          // Timer visual
+          state.iv = setInterval(function(){
+            if (state.phase !== 'running') return;
+            $('#tmr').textContent = fmt(performance.now() - state.t0);
+          }, 16);
+          
+          // Auto-stop 14.5s
+          state.autoStop = setTimeout(function(){
+            if (state.phase === 'running') doStop(false, true);
+          }, 14500);
+        })
+        .catch(function(e){
+          toast(e.message);
+          $('#btn').disabled = false;
+          $('#btn').textContent = 'INICIAR RETO';
+        });
+
+    } else if (state.phase === 'running'){
+      // Cooldown de 3 segundos para evitar clics accidentales
+      if (performance.now() - state.t0 < 3000) return toast('Espera un poco más...');
+      doStop(evt ? evt.isTrusted : false, false);
+    }
+  };
+
+  function doStop(trusted, isAuto){
+    if (state.phase !== 'running') return;
+    state.phase = 'stopped';
+    if (state.iv){ clearInterval(state.iv); state.iv = null; }
+    if (state.autoStop){ clearTimeout(state.autoStop); state.autoStop = null; }
+    
+    var elapsed = Math.round(performance.now() - state.t0);
+    $('#btn').disabled = true;
+    $('#btn').textContent = isAuto ? '⏰ TIEMPO AGOTADO' : 'VERIFICANDO...';
+
+    call('stop','POST',{
+      token: state.token,
+      isTrusted: isAuto ? false : (trusted === true),
+      clientElapsed: elapsed
+    })
+    .then(function(d){
+      // Actualizamos con el tiempo exacto del servidor (2 decimales)
+      $('#tmr').textContent = fmt(d.serverElapsed);
+      showResult(d, isAuto);
+    })
+    .catch(function(e){
+      toast(e.message);
+      showResult({
+        serverElapsed: elapsed,
+        diff: Math.abs(elapsed - 10000),
+        isWinner: false,
+        status: 'ERROR'
+      }, isAuto);
+    });
+  }
+
+  function showResult(d, wasAuto){
+    var tmr = $('#tmr');
+    var btn = $('#btn');
+    tmr.classList.remove('run');
+
+    // La lógica de clase 'win' o 'lose' ahora depende de lo que diga el servidor
+    // según la tolerancia de 1 segundo (1000ms) que configuramos en la API.
+    if (d.isWinner){
+      tmr.classList.add('win');
+    } else {
+      tmr.classList.add('lose');
+    }
+
+    // Reset de estado
+    state.token = null;
+    state.phase = 'idle';
+    btn.classList.remove('run');
+    btn.textContent = 'JUGAR DE NUEVO';
+    btn.disabled = false;
+    
+    btn.onclick = function(){
+      tmr.textContent = '00.00';
+      tmr.classList.remove('run','win','lose');
+      $('#playerKey').style.display = 'block';
+      $('#playerKey').value = '';
+      btn.textContent = 'INICIAR RETO';
+      btn.classList.remove('run');
+      btn.onclick = null;
+    };
+  }
+
+  // Protección antes de cerrar la pestaña
+  window.addEventListener('beforeunload', function(){
+    if (state.phase === 'running' && state.token){
+      navigator.sendBeacon(
+        API + '?action=stop',
+        new Blob([JSON.stringify({
+          token: state.token,
+          isTrusted: false,
+          clientElapsed: Math.round(performance.now() - state.t0)
+        })], { type: 'application/json' })
+      );
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════
+  // ADMIN FUNCTIONS
+  // ═══════════════════════════════════════════════════════════
+  window.admAuth = function(){
+    admKey = $('#admKey').value.trim();
+    if (!admKey) return toast('Ingresa la clave de admin');
+    call('audit','GET',null,'&key='+encodeURIComponent(admKey))
+      .then(function(d){
+        $('#admLogin').style.display = 'none';
+        $('#admBody').style.display = 'block';
+        renderAudit(d.entries || []);
+      })
+      .catch(function(e){ toast(e.message); });
+  };
+
+  function renderAudit(entries){
+    var tb = $('#admTb');
+    if (!entries.length){ 
+        tb.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--dim,#888)">Sin registros</td></tr>'; 
+        return; 
+    }
+    tb.innerHTML = entries.map(function(e){
+      var time = e.serverElapsed ? (e.serverElapsed/1000).toFixed(3)+'s' : '—';
+      var diff = e.diff !== undefined ? e.diff+'ms' : '—';
+      var c = {
+          'GANADOR':'var(--green,#22c55e)',
+          'GANADOR_PENDIENTE':'var(--green,#22c55e)',
+          'REVISION_MANUAL':'var(--amber,#f59e0b)',
+          'SOSPECHOSO':'var(--red,#ef4444)',
+          'EXPIRADO':'var(--red,#ef4444)',
+          'LIMPIO':'var(--text-3,#888)'
+      }[e.status] || 'var(--text-3,#888)';
+      
+      var k = e.playerKey ? e.playerKey.slice(0,6)+'..' : '—';
+      var fl = e.flags && e.flags.length ? ' ⚠' : '';
+      return '<tr><td>'+k+'</td><td>'+time+'</td><td>'+diff+'</td><td style="color:'+c+';font-weight:bold">'+e.status+fl+'</td></tr>';
+    }).join('');
+  }
+
+  window.generateKeys = function(){
+    var n = $('#genCount').value || 10;
+    call('gen','GET',null,'&key='+encodeURIComponent(admKey)+'&count='+n)
+      .then(function(d){
+        state.keys = d.keys || [];
+        $('#btnDl').style.display = 'block';
+        toast('✅ '+state.keys.length+' claves generadas');
+        call('audit','GET',null,'&key='+encodeURIComponent(admKey)).then(function(d){ renderAudit(d.entries||[]); });
+      })
+      .catch(function(e){ toast(e.message); });
+  };
+
+  window.downloadKeys = function(){
+    if (!state.keys.length) return toast('No hay claves');
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([state.keys.join('\n')],{type:'text/plain'}));
+    a.download = 'claves_'+new Date().toISOString().slice(0,10)+'.txt';
+    a.click();
+  };
+
+  // Ping inicial
+  call('ping').then(function(){
+    $('#calScr').classList.remove('on');
+    $('#gameScr').classList.add('on');
+  }).catch(function(){
+    $('#calDet').textContent = 'Error al conectar. Recarga la página.';
+  });
+}();
