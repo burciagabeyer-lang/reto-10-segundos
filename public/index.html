@@ -20,99 +20,183 @@
         body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
         .scr{display:none;min-height:100vh;padding:24px 20px 100px;flex-direction:column;align-items:center;justify-content:center}
         .scr.on{display:flex}
-        .container{width:100%;max-width:420px;text-align:center}
-        
-        /* Prize & Objective */
-        .prize{display:inline-flex;align-items:center;gap:8px;background:var(--amber-dim);border:1px solid rgba(245,158,11,.2);border-radius:100px;padding:8px 20px;margin-bottom:32px}
-        .prize-dot{width:6px;height:6px;background:var(--amber);border-radius:50%;box-shadow: 0 0 8px var(--amber)}
-        .prize-text{font-size:.8rem;font-weight:600;color:var(--amber);letter-spacing:.04em}
-        .objective{color:var(--text-3);font-size:.8rem;margin-bottom:8px}
 
-        /* Ring & Timer */
-        .ring-wrap{position:relative;width:280px;height:280px;margin:24px auto}
+        #calScr .container{text-align:center}
+        #calScr h2{font-weight:300;font-size:1.1rem;letter-spacing:.08em;color:var(--text-2);animation:fadeUp .6s ease}
+        #calDet{color:var(--text-3);font-size:.85rem;margin-top:12px}
+        .cal-dots{display:flex;gap:6px;justify-content:center;margin-top:20px}
+        .cal-dots span{width:4px;height:4px;background:var(--text-3);border-radius:50%;animation:calP 1.2s ease infinite}
+        .cal-dots span:nth-child(2){animation-delay:.2s}.cal-dots span:nth-child(3){animation-delay:.4s}
+        @keyframes calP{0%,100%{opacity:.3}50%{opacity:1}}
+
+        .container{width:100%;max-width:420px;text-align:center}
+
+        .prize{display:inline-flex;align-items:center;gap:8px;background:var(--amber-dim);border:1px solid rgba(245,158,11,.2);border-radius:100px;padding:8px 20px;margin-bottom:32px;animation:fadeUp .5s ease}
+        .prize-dot{width:6px;height:6px;background:var(--amber);border-radius:50%;animation:pdot 2s ease infinite}
+        @keyframes pdot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(245,158,11,.4)}50%{opacity:.7;box-shadow:0 0 0 6px rgba(245,158,11,0)}}
+        .prize-text{font-size:.8rem;font-weight:600;color:var(--amber);letter-spacing:.04em}
+
+        .objective{color:var(--text-3);font-size:.8rem;letter-spacing:.06em;margin-bottom:8px;animation:fadeUp .5s ease .1s both}
+        .objective b{color:var(--text-2);font-weight:600}
+
+        .ring-wrap{position:relative;width:280px;height:280px;margin:24px auto;animation:fadeUp .6s ease .15s both}
         .ring-svg{width:100%;height:100%;transform:rotate(-90deg)}
         .ring-bg{fill:none;stroke:var(--ring-base);stroke-width:2}
-        .ring-fill{fill:none;stroke:var(--text-3);stroke-width:3;stroke-linecap:round;stroke-dasharray:816;stroke-dashoffset:816;transition:stroke .4s ease}
-        .ring-fill.near{stroke:var(--amber)!important}
-        .ring-fill.win{stroke:var(--green)!important}
-        .ring-fill.lose{stroke:var(--red)!important}
+        .ring-fill{fill:none;stroke:var(--text-3);stroke-width:3;stroke-linecap:round;stroke-dasharray:816;stroke-dashoffset:816;transition:stroke .4s ease,filter .4s ease}
+        .ring-fill.active{stroke:var(--text-2)}
+        .ring-fill.near{stroke:var(--amber)!important;filter:drop-shadow(0 0 6px rgba(245,158,11,.3))}
+        .ring-fill.over{stroke:var(--red)!important;filter:drop-shadow(0 0 6px rgba(239,68,68,.3))}
+        .ring-fill.win{stroke:var(--green)!important;filter:drop-shadow(0 0 8px rgba(34,197,94,.4))}
+        .ring-fill.close{stroke:var(--amber)!important;filter:drop-shadow(0 0 8px rgba(245,158,11,.4))}
         .ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-        .tmr{font-family:var(--mono);font-size:3.8rem;font-weight:600;color:var(--text)}
+
+        .tmr{font-family:var(--mono);font-size:3.8rem;font-weight:600;letter-spacing:-.02em;color:var(--text);line-height:1;transition:color .3s}
+        .tmr.run{color:var(--text)}
         .tmr.win{color:var(--green)}
         .tmr.lose{color:var(--red)}
+        .tmr-label{font-size:.65rem;color:var(--text-3);letter-spacing:.2em;text-transform:uppercase;font-weight:500;margin-bottom:8px}
+        @keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-4px)}20%,40%,60%,80%{transform:translateX(4px)}}
+        .tmr.shake{animation:shake .5s ease}
 
-        /* Input & Buttons */
-        input{width:100%;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--mono);text-align:center;margin-bottom:16px;outline:none}
-        button{width:100%;padding:16px;border-radius:12px;border:none;font-family:var(--body);font-weight:600;font-size:.95rem;cursor:pointer;transition:all .15s ease}
+        .key-section{animation:fadeUp .5s ease .2s both}
+        .key-label{font-size:.7rem;color:var(--text-3);letter-spacing:.12em;text-transform:uppercase;font-weight:500;margin-bottom:10px}
+        input{width:100%;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--mono);font-size:1rem;font-weight:500;text-align:center;letter-spacing:.08em;text-transform:uppercase;outline:none;transition:border-color .2s;margin-bottom:16px}
+        input:focus{border-color:var(--text-3)}
+        input::placeholder{color:var(--text-3);font-family:var(--body);font-size:.85rem;font-weight:400;letter-spacing:.02em;text-transform:none}
+
+        button{width:100%;padding:16px 24px;border-radius:12px;border:none;font-family:var(--body);font-weight:600;font-size:.95rem;letter-spacing:.04em;cursor:pointer;transition:all .15s ease}
+        button:active{transform:scale(.97)}
+        button:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
         .btn-go{background:var(--text);color:var(--bg)}
-        .btn-go.run{background:var(--red);color:#fff}
-        
-        /* Overlays */
-        .ov{display:none;position:fixed;inset:0;z-index:998;background:rgba(9,9,11,.95);backdrop-filter:blur(8px);flex-direction:column;align-items:center;justify-content:center;padding:24px}
-        .ov.on{display:flex}
-        .ov-icon{font-size:4rem;margin-bottom:16px}
-        .ov-title{font-size:2rem;font-weight:800;margin-bottom:8px}
-        .ov-time{font-family:var(--mono);font-size:1.5rem;color:var(--text-2);margin-bottom:24px}
-        
-        /* Toast */
-        #toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:12px 24px;border-radius:12px;z-index:1001;transition:transform .4s}
+        .btn-go:hover:not(:disabled){box-shadow:0 4px 24px rgba(250,250,250,.1)}
+        .btn-go.run{background:var(--red);color:#fff;animation:btnP 1.5s ease-in-out infinite}
+        @keyframes btnP{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.3)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+
+        .status-bar{display:flex;justify-content:center;gap:48px;margin-top:28px;padding-top:20px;border-top:1px solid var(--border);animation:fadeUp .5s ease .3s both}
+        .stat{text-align:center}
+        .stat-label{font-size:.6rem;color:var(--text-3);letter-spacing:.15em;text-transform:uppercase;font-weight:500}
+        .stat-value{font-family:var(--mono);font-size:.8rem;font-weight:500;color:var(--text-2);margin-top:4px}
+
+        #toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-120px);background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:14px 28px;border-radius:12px;font-size:.85rem;font-weight:500;z-index:1001;transition:transform .4s cubic-bezier(.16,1,.3,1);white-space:nowrap;max-width:90vw}
         #toast.vis{transform:translateX(-50%) translateY(0)}
 
-        /* Nav */
-        .nav{position:fixed;bottom:0;width:100%;background:var(--surface);border-top:1px solid var(--border);display:flex}
-        .nav-b{flex:1;padding:16px;text-align:center;color:var(--text-3);cursor:pointer;font-size:.75rem;font-weight:600}
+        #confetti{position:fixed;inset:0;z-index:999;pointer-events:none}
+
+        .ov{display:none;position:fixed;inset:0;z-index:998;flex-direction:column;align-items:center;justify-content:center;padding:24px;animation:fadeIn .4s ease}
+        .ov.on{display:flex}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+        .ov-win{background:rgba(9,9,11,.9);backdrop-filter:blur(8px)}
+        .ov-icon{font-size:5rem;margin-bottom:20px;animation:ovBounce .6s cubic-bezier(.34,1.56,.64,1)}
+        @keyframes ovBounce{0%{transform:scale(0) rotate(-10deg)}100%{transform:scale(1) rotate(0)}}
+        .ov-title{font-size:2.2rem;font-weight:800;letter-spacing:-.01em;margin-bottom:10px}
+        .ov-title.green{color:var(--green)}
+        .ov-title.amber{color:var(--amber)}
+        .ov-title.red{color:var(--red)}
+        .ov-time{font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--text-2);margin-bottom:8px}
+        .ov-sub{font-size:.9rem;color:var(--text-3);margin-bottom:8px;line-height:1.5;max-width:320px}
+        .ov-promo{display:none;background:var(--amber-dim);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:14px 20px;margin:12px 0 4px;max-width:320px}
+        .ov-promo.on{display:block}
+        .ov-promo-text{font-size:.85rem;color:var(--amber);font-weight:500;line-height:1.5}
+        .ov-spacer{height:24px}
+        .ov-btn{width:auto;padding:14px 48px;border-radius:12px;font-weight:700;font-size:.95rem;border:none;cursor:pointer}
+        .ov-btn.green{background:var(--green);color:#000}
+        .ov-btn.amber{background:var(--amber);color:#000}
+        .ov-btn.white{background:var(--text);color:var(--bg)}
+        .ov-btn:hover{opacity:.9}
+
+        #admScr .container{max-width:600px}
+        .adm-tools{background:var(--surface);border:1px solid var(--border);padding:20px;border-radius:16px;margin-bottom:20px}
+        .adm-tools h3{font-size:.7rem;color:var(--text-3);letter-spacing:.12em;text-transform:uppercase;font-weight:500;margin-bottom:14px}
+        .gen-box{display:flex;gap:10px;margin-bottom:10px}
+        #genCount{width:80px;margin-bottom:0;padding:12px;font-size:.85rem}
+        .btn-gen{flex:2;background:var(--text);color:var(--bg);padding:12px;font-size:.85rem}
+        .btn-dl{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,.2);margin-top:10px;padding:12px;font-size:.85rem}
+        .tb-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow-x:auto}
+        table{width:100%;border-collapse:collapse;font-size:.8rem}
+        th{text-align:left;padding:14px 16px;color:var(--text-3);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;border-bottom:1px solid var(--border)}
+        td{padding:12px 16px;font-family:var(--mono);font-size:.75rem;border-bottom:1px solid rgba(39,39,42,.5);color:var(--text-2)}
+
+        .nav{position:fixed;bottom:0;width:100%;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:50}
+        .nav-b{flex:1;padding:16px;text-align:center;color:var(--text-3);cursor:pointer;font-size:.75rem;font-weight:600;letter-spacing:.1em;transition:color .2s}
         .nav-b.act{color:var(--text)}
+
+        @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        @media(max-width:380px){.tmr{font-size:2.8rem}.ring-wrap{width:240px;height:240px}.ov-title{font-size:1.6rem}}
     </style>
 </head>
 <body>
     <div id="toast">Error</div>
+    <canvas id="confetti"></canvas>
 
     <div class="ov" id="resultOv">
         <div class="ov-icon" id="ovIcon">🎯</div>
-        <div class="ov-title" id="ovTitle">¡GANASTE!</div>
+        <div class="ov-title green" id="ovTitle">¡GANASTE!</div>
         <div class="ov-time" id="ovTime">10.00s</div>
-        <button class="btn-go" style="width:auto; padding:12px 40px" onclick="resetGameUI()">CERRAR</button>
+        <div class="ov-sub" id="ovSub">Tu resultado está en revisión</div>
+        <div class="ov-promo" id="ovPromo">
+            <div class="ov-promo-text" id="ovPromoText">🔥 Pregunta por tu promoción especial</div>
+        </div>
+        <div class="ov-spacer"></div>
+        <button class="ov-btn green" id="ovBtn" onclick="closeResult()">Cerrar</button>
     </div>
 
     <div id="calScr" class="scr on">
-        <h2>Conectando...</h2>
+        <div class="container">
+            <h2>Conectando</h2>
+            <p id="calDet">Preparando el reto...</p>
+            <div class="cal-dots"><span></span><span></span><span></span></div>
+        </div>
     </div>
 
     <div id="gameScr" class="scr">
         <div class="container">
             <div class="prize"><div class="prize-dot"></div><span class="prize-text">$200 EN JUEGO</span></div>
-            <div class="objective">Detén el reloj entre <b>09.00s y 11.00s</b></div>
+            <div class="objective">Detén el reloj exactamente en <b>10.00 segundos</b></div>
             <div class="ring-wrap">
                 <svg class="ring-svg" viewBox="0 0 280 280">
                     <circle class="ring-bg" cx="140" cy="140" r="130"/>
                     <circle class="ring-fill" id="ringFill" cx="140" cy="140" r="130"/>
                 </svg>
                 <div class="ring-inner">
+                    <div class="tmr-label">TIEMPO</div>
                     <div id="tmr" class="tmr">00.00</div>
                 </div>
             </div>
-            <div id="inputArea">
-                <input type="text" id="playerKey" placeholder="INGRESA TU CLAVE" autocomplete="off">
+            <div class="key-section">
+                <div class="key-label">Código de acceso</div>
+                <input type="text" id="playerKey" placeholder="Ingresa tu clave" autocomplete="off">
             </div>
             <button id="btn" class="btn-go" onclick="handleBtn(event)">INICIAR RETO</button>
+            <div class="status-bar">
+                <div class="stat"><div class="stat-label">Objetivo</div><div class="stat-value">10.00s</div></div>
+                <div class="stat"><div class="stat-label">Premio</div><div class="stat-value" style="color:var(--amber)">$200</div></div>
+            </div>
         </div>
     </div>
 
     <div id="admScr" class="scr">
         <div class="container">
             <div id="admLogin">
-                <input type="password" id="admKey" placeholder="Contraseña Admin">
+                <div class="key-label">Panel de administración</div>
+                <input type="password" id="admKey" placeholder="Contraseña">
                 <button class="btn-go" onclick="admAuth()">Acceder</button>
             </div>
-            <div id="admBody" style="display:none; width:100%">
-                <div style="background:var(--surface); padding:16px; border-radius:12px; margin-bottom:16px">
-                   <input type="number" id="genCount" value="10" style="margin:0; width:80px">
-                   <button onclick="generateKeys()" style="width:auto; background:var(--green); color:#000">Generar</button>
-                   <button id="btnDl" onclick="downloadKeys()" style="display:none; width:auto; background:var(--text); margin-top:8px">Descargar .TXT</button>
+            <div id="admBody" style="display:none;width:100%;">
+                <div class="adm-tools">
+                    <h3>Generar claves</h3>
+                    <div class="gen-box">
+                        <input type="number" id="genCount" value="10" min="1">
+                        <button class="btn-gen" onclick="generateKeys()">Generar</button>
+                    </div>
+                    <button id="btnDl" class="btn-dl" style="display:none;" onclick="downloadKeys()">Descargar .TXT</button>
                 </div>
-                <table style="width:100%; font-size:.8rem; border-collapse:collapse">
-                    <tbody id="admTb"></tbody>
-                </table>
+                <div class="tb-wrap">
+                    <table>
+                        <thead><tr><th>Clave</th><th>Tiempo</th><th>Dif</th><th>Status</th></tr></thead>
+                        <tbody id="admTb"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -123,59 +207,125 @@
     </div>
 
     <script>
-        // MOTOR VISUAL (Sincronizado con script.js)
+    !function(){
         var ring = document.getElementById('ringFill');
+        var tmr = document.getElementById('tmr');
+        var canvas = document.getElementById('confetti');
+        var ctx = canvas.getContext('2d');
         var CIRC = 2 * Math.PI * 130;
         ring.style.strokeDasharray = CIRC;
         ring.style.strokeDashoffset = CIRC;
 
-        function updateRing() {
-            if (!document.getElementById('tmr').classList.contains('run')) return;
-            var val = parseFloat(document.getElementById('tmr').textContent);
-            var progress = Math.min(val / 14, 1);
-            ring.style.strokeDashoffset = CIRC - (progress * CIRC);
-            
-            // Lógica de color de advertencia (1 segundo de tolerancia)
-            if (val >= 9.00 && val <= 11.00) ring.classList.add('near');
-            else ring.classList.remove('near');
-            
-            requestAnimationFrame(updateRing);
+        var processing = false, gameActive = false, ringAnim = null;
+        var audioCtx = null, oscNode = null, gainNode = null;
+
+        function startTension(){
+            try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                oscNode = audioCtx.createOscillator(); gainNode = audioCtx.createGain();
+                oscNode.type='sine'; oscNode.frequency.value=180; gainNode.gain.value=0.04;
+                oscNode.connect(gainNode); gainNode.connect(audioCtx.destination); oscNode.start();
+            } catch(e){}
+        }
+        function updateTension(s){ if(!oscNode||!gainNode)return;
+            try{var t=Math.min(s/10,1);oscNode.frequency.value=180+(t*t*420);gainNode.gain.value=Math.min(.04+(t*.08),.15)}catch(e){}
+        }
+        function stopTension(){try{if(oscNode){oscNode.stop();oscNode=null}gainNode=null}catch(e){}}
+
+        function playWin(){ try{ if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+                [523,659,784,1047].forEach(function(f,i){
+                    var o=audioCtx.createOscillator(),g=audioCtx.createGain();
+                    o.type='sine';o.frequency.value=f;g.gain.value=.1;
+                    g.gain.setValueAtTime(.1,audioCtx.currentTime+i*.12);
+                    g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+i*.12+.7);
+                    o.connect(g);g.connect(audioCtx.destination);
+                    o.start(audioCtx.currentTime+i*.12);o.stop(audioCtx.currentTime+i*.12+.7);
+                });
+            }catch(e){}
+        }
+        function playClose(){ try{ if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+                [440,554,659].forEach(function(f,i){
+                    var o=audioCtx.createOscillator(),g=audioCtx.createGain();
+                    o.type='sine';o.frequency.value=f;g.gain.value=.07;
+                    g.gain.setValueAtTime(.07,audioCtx.currentTime+i*.15);
+                    g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+i*.15+.5);
+                    o.connect(g);g.connect(audioCtx.destination);
+                    o.start(audioCtx.currentTime+i*.15);o.stop(audioCtx.currentTime+i*.15+.5);
+                });
+            }catch(e){}
+        }
+        function playLose(){ try{ if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+                var o=audioCtx.createOscillator(),g=audioCtx.createGain();
+                o.type='sawtooth';o.frequency.value=150;g.gain.value=.06;
+                g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.4);
+                o.frequency.exponentialRampToValueAtTime(80,audioCtx.currentTime+.4);
+                o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.4);
+            }catch(e){}
         }
 
-        // Esta función la llama el script.js al terminar
-        window.showFinalResult = function(isWinner, timeText) {
-            var ov = document.getElementById('resultOv');
-            var ring = document.getElementById('ringFill');
-            
-            document.getElementById('ovTime').textContent = timeText + "s";
-            ring.classList.remove('near');
-            
-            if(isWinner) {
-                document.getElementById('ovIcon').textContent = "🎯";
-                document.getElementById('ovTitle').textContent = "¡GANASTE!";
-                document.getElementById('ovTitle').style.color = "var(--green)";
-                ring.classList.add('win');
-            } else {
-                document.getElementById('ovIcon').textContent = "⏱";
-                document.getElementById('ovTitle').textContent = "FUERA DE RANGO";
-                document.getElementById('ovTitle').style.color = "var(--red)";
-                ring.classList.add('lose');
-            }
-            ov.classList.add('on');
-        };
+        function startRing(){ gameActive=true; ring.classList.remove('near','over','win','close'); ring.classList.add('active'); startTension(); tickRing(); }
+        function tickRing(){ if(!gameActive)return;
+            var txt=tmr.textContent||'00.00', p=txt.split('.');
+            var total=(parseInt(p[0])||0)+(parseInt(p[1])||0)/100;
+            var progress=Math.min(total/14,1);
+            ring.style.strokeDashoffset=CIRC-(progress*CIRC);
+            ring.classList.remove('near','over');
+            if(total>=8.5&&total<=11.5)ring.classList.add('near');
+            if(total>11.5)ring.classList.add('over');
+            updateTension(total);
+            ringAnim=requestAnimationFrame(tickRing);
+        }
+        function stopRing(result){ gameActive=false; if(ringAnim){cancelAnimationFrame(ringAnim);ringAnim=null}
+            stopTension(); ring.classList.remove('active','near','over','win','close');
+            if(result==='win')ring.classList.add('win'); else if(result==='close')ring.classList.add('close');
+        }
+        function resetRing(){ ring.style.strokeDashoffset=CIRC; ring.classList.remove('active','near','over','win','close'); }
 
-        window.resetGameUI = function() {
-            document.getElementById('resultOv').classList.remove('on');
-            document.getElementById('tmr').textContent = "00.00";
-            document.getElementById('tmr').className = "tmr";
-            document.getElementById('ringFill').className = "ring-fill";
-            document.getElementById('ringFill').style.strokeDashoffset = CIRC;
-            document.getElementById('inputArea').style.display = "block";
-            document.getElementById('playerKey').value = "";
-            document.getElementById('btn').textContent = "INICIAR RETO";
-            document.getElementById('btn').className = "btn-go";
-            document.getElementById('btn').disabled = false;
-        };
+        var particles=[], confettiOn=false;
+        function resizeC(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+        window.addEventListener('resize',resizeC); resizeC();
+        function fireConfetti(intensity){ particles=[];
+            var colors = intensity==='big' ? ['#22c55e','#4ade80','#86efac','#fafafa','#f59e0b','#fbbf24'] : ['#f59e0b','#fbbf24','#facc15','#fcd34d','#fafafa'];
+            var count = intensity==='big' ? 180 : 100; var bursts = intensity==='big' ? 4 : 3;
+            for(var b=0;b<bursts;b++){ var cx=canvas.width*(0.15+b*(0.7/(bursts-1)));
+                for(var i=0;i<count/bursts;i++){ particles.push({ x:cx+(Math.random()-.5)*80, y:canvas.height*0.35, vx:(Math.random()-.5)*18, vy:-Math.random()*20-5, w:Math.random()*10+4, h:Math.random()*7+3, color:colors[Math.floor(Math.random()*colors.length)], rot:Math.random()*360, rv:(Math.random()-.5)*14, g:.2+Math.random()*.1, life:1, decay: 0.002 + Math.random()*0.002 }); }
+            }
+            confettiOn=true; animC();
+        }
+        function animC(){ if(!confettiOn)return; ctx.clearRect(0,0,canvas.width,canvas.height); var alive=false;
+            for(var i=0;i<particles.length;i++){ var p=particles[i]; if(p.life<=0)continue; alive=true; p.x+=p.vx; p.y+=p.vy; p.vy+=p.g; p.vx*=.99; p.rot+=p.rv; p.life-=p.decay; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180); ctx.globalAlpha=Math.min(p.life*1.5,1); ctx.fillStyle=p.color; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore(); }
+            if(alive)requestAnimationFrame(animC); else{confettiOn=false;ctx.clearRect(0,0,canvas.width,canvas.height)}
+        }
+
+        window.closeResult = function(){ document.getElementById('resultOv').classList.remove('on'); };
+
+        function showOverlay(type, timeText, diff){
+            var ov = document.getElementById('resultOv'); var icon = document.getElementById('ovIcon');
+            var title = document.getElementById('ovTitle'); var time = document.getElementById('ovTime');
+            var sub = document.getElementById('ovSub'); var promo = document.getElementById('ovPromo');
+            var promoText = document.getElementById('ovPromoText'); var btn = document.getElementById('ovBtn');
+            time.textContent = timeText + 's';
+            if (type === 'exact'){ icon.textContent = '🎯'; title.textContent = '¡GANASTE!'; title.className = 'ov-title green'; sub.textContent = 'Tu resultado está en revisión'; promo.classList.remove('on'); btn.className = 'ov-btn green'; btn.textContent = 'Cerrar'; }
+            else if (type === 'close'){ icon.textContent = '🔥'; title.textContent = '¡Estuviste MUY cerca!'; title.className = 'ov-title amber'; sub.textContent = 'Tu tiempo: ' + timeText + 's — Casi lo logras'; promo.classList.add('on'); promoText.textContent = '✨ Pregunta por tu promoción especial'; btn.className = 'ov-btn amber'; btn.textContent = 'Cerrar'; }
+            else if (type === 'timeout'){ icon.textContent = '⏰'; title.textContent = 'Tiempo agotado'; title.className = 'ov-title red'; sub.textContent = 'Se pasó del límite'; promo.classList.remove('on'); btn.className = 'ov-btn white'; btn.textContent = 'Intentar de nuevo'; }
+            else { icon.textContent = diff < 200 ? '🔥' : '⏱'; title.textContent = diff < 200 ? '¡Casi!' : 'No esta vez'; title.className = 'ov-title red'; sub.textContent = 'Diferencia: ' + diff + 'ms'; promo.classList.remove('on'); btn.className = 'ov-btn white'; btn.textContent = 'Intentar de nuevo'; }
+            ov.classList.add('on');
+        }
+
+        var lastState = '';
+        var observer = new MutationObserver(function(){
+            if(processing) return; var cl = tmr.classList; var cur = '';
+            if(cl.contains('win'))cur='win'; else if(cl.contains('lose'))cur='lose'; else if(cl.contains('run'))cur='run'; else cur='idle';
+            if(cur===lastState)return; lastState=cur; processing=true;
+            if(cur==='run' && !gameActive){ startRing(); }
+            else if(cur==='win'){ var timeText = tmr.textContent || '00.00'; var isExact = (timeText === '10.00');
+                if(isExact){ stopRing('win'); playWin(); fireConfetti('big'); setTimeout(function(){ showOverlay('exact', timeText, 0); }, 400); }
+                else { stopRing('close'); playClose(); fireConfetti('medium'); var parts = timeText.split('.'); var ms = (parseInt(parts[0])||0)*1000 + (parseInt(parts[1])||0)*10; var diff = Math.abs(ms - 10000); setTimeout(function(){ showOverlay('close', timeText, diff); }, 400); }
+            } else if(cur==='lose'){ stopRing(false); playLose(); tmr.classList.add('shake'); setTimeout(function(){processing=true;tmr.classList.remove('shake');processing=false;},500); var timeText = tmr.textContent || '00.00'; var parts = timeText.split('.'); var ms = (parseInt(parts[0])||0)*1000 + (parseInt(parts[1])||0)*10; var diff = Math.abs(ms - 10000); var wasTimeout = ms > 14000; setTimeout(function(){ showOverlay(wasTimeout ? 'timeout' : 'lose', timeText, diff); }, 600);
+            } else if(cur==='idle'){ stopRing(false); resetRing(); }
+            processing=false;
+        });
+        observer.observe(tmr, { attributes:true, attributeFilter:['class'] });
+    }();
     </script>
     <script src="/script.js"></script>
 </body>
