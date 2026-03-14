@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -7,20 +7,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg:#09090b;--surface:#111113;--surface-2:#18181b;--border:#27272a;
-            --text:#fafafa;--text-2:#a1a1aa;--text-3:#52525b;
-            --amber:#f59e0b;--amber-dim:rgba(245,158,11,.1);
-            --green:#22c55e;--green-dim:rgba(34,197,94,.08);
-            --red:#ef4444;--ring-base:#27272a;
-            --mono:'IBM Plex Mono',monospace;--body:'Sora',sans-serif;
-        }
+        :root{--bg:#09090b;--surface:#111113;--surface-2:#18181b;--border:#27272a;--text:#fafafa;--text-2:#a1a1aa;--text-3:#52525b;--amber:#f59e0b;--amber-dim:rgba(245,158,11,.1);--green:#22c55e;--red:#ef4444;--ring-base:#27272a;--mono:'IBM Plex Mono',monospace;--body:'Sora',sans-serif}
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
         body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-        .scr{display:none;min-height:100vh;padding:24px 20px 100px;flex-direction:column;align-items:center;justify-content:center}
-        .scr.on{display:flex}
-
-        /* Calibration */
+        .scr{display:none;min-height:100vh;padding:24px 20px 100px;flex-direction:column;align-items:center;justify-content:center}.scr.on{display:flex}
         #calScr .container{text-align:center}
         #calScr h2{font-weight:300;font-size:1.2rem;letter-spacing:.08em;color:var(--text-2);animation:fadeUp .6s ease}
         #calDet{color:var(--text-3);font-size:.9rem;margin-top:12px}
@@ -28,100 +18,69 @@
         .cal-dots span{width:5px;height:5px;background:var(--text-3);border-radius:50%;animation:calP 1.2s ease infinite}
         .cal-dots span:nth-child(2){animation-delay:.2s}.cal-dots span:nth-child(3){animation-delay:.4s}
         @keyframes calP{0%,100%{opacity:.3}50%{opacity:1}}
-
         .container{width:100%;max-width:460px;text-align:center}
-
-        /* Brand */
         .brand{font-size:.65rem;color:var(--text-3);letter-spacing:.25em;text-transform:uppercase;font-weight:500;margin-bottom:24px;animation:fadeUp .4s ease}
-
-        /* Prize */
         .prize{display:inline-flex;align-items:center;gap:8px;background:var(--amber-dim);border:1px solid rgba(245,158,11,.2);border-radius:100px;padding:10px 24px;margin-bottom:28px;animation:fadeUp .5s ease}
         .prize-dot{width:7px;height:7px;background:var(--amber);border-radius:50%;animation:pdot 2s ease infinite}
         @keyframes pdot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(245,158,11,.4)}50%{opacity:.7;box-shadow:0 0 0 6px rgba(245,158,11,0)}}
         .prize-text{font-size:.85rem;font-weight:600;color:var(--amber);letter-spacing:.04em}
-
         .objective{color:var(--text-3);font-size:.9rem;letter-spacing:.04em;margin-bottom:12px;animation:fadeUp .5s ease .1s both}
         .objective b{color:var(--text-2);font-weight:600}
-
-        /* Ring — BIGGER */
         .ring-wrap{position:relative;width:320px;height:320px;margin:20px auto;animation:fadeUp .6s ease .15s both}
         .ring-svg{width:100%;height:100%;transform:rotate(-90deg)}
         .ring-bg{fill:none;stroke:var(--ring-base);stroke-width:2}
-        .ring-fill{fill:none;stroke:var(--text-3);stroke-width:3;stroke-linecap:round;stroke-dasharray:942;stroke-dashoffset:942;transition:stroke .4s ease,filter .4s ease}
+        .ring-fill{fill:none;stroke:var(--text-3);stroke-width:3;stroke-linecap:round;stroke-dasharray:942;stroke-dashoffset:942;transition:stroke .4s,filter .4s}
         .ring-fill.active{stroke:var(--text-2)}
         .ring-fill.near{stroke:var(--amber)!important;filter:drop-shadow(0 0 8px rgba(245,158,11,.35))}
         .ring-fill.over{stroke:var(--red)!important;filter:drop-shadow(0 0 8px rgba(239,68,68,.35))}
         .ring-fill.win{stroke:var(--green)!important;filter:drop-shadow(0 0 10px rgba(34,197,94,.5))}
         .ring-fill.close{stroke:var(--amber)!important;filter:drop-shadow(0 0 10px rgba(245,158,11,.5))}
         .ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-
-        /* Timer — BIGGER */
         .tmr{font-family:var(--mono);font-size:4.5rem;font-weight:600;letter-spacing:-.02em;color:var(--text);line-height:1;transition:color .3s}
-        .tmr.run{color:var(--text)}
-        .tmr.win{color:var(--green)}
-        .tmr.lose{color:var(--red)}
+        .tmr.run{color:var(--text)}.tmr.win{color:var(--green)}.tmr.lose{color:var(--red)}
         .tmr-label{font-size:.7rem;color:var(--text-3);letter-spacing:.2em;text-transform:uppercase;font-weight:500;margin-bottom:10px}
         @keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-5px)}20%,40%,60%,80%{transform:translateX(5px)}}
         .tmr.shake{animation:shake .5s ease}
-
-        /* Input */
         .key-section{animation:fadeUp .5s ease .2s both}
         .key-label{font-size:.75rem;color:var(--text-3);letter-spacing:.12em;text-transform:uppercase;font-weight:500;margin-bottom:12px}
         input{width:100%;padding:18px 20px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--mono);font-size:1.1rem;font-weight:500;text-align:center;letter-spacing:.08em;text-transform:uppercase;outline:none;transition:border-color .2s;margin-bottom:18px}
         input:focus{border-color:var(--text-3)}
         input::placeholder{color:var(--text-3);font-family:var(--body);font-size:.9rem;font-weight:400;letter-spacing:.02em;text-transform:none}
-
-        /* Button — BIGGER */
-        button{width:100%;padding:18px 24px;border-radius:14px;border:none;font-family:var(--body);font-weight:600;font-size:1.05rem;letter-spacing:.04em;cursor:pointer;transition:all .15s ease}
-        button:active{transform:scale(.97)}
-        button:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+        button{width:100%;padding:18px 24px;border-radius:14px;border:none;font-family:var(--body);font-weight:600;font-size:1.05rem;letter-spacing:.04em;cursor:pointer;transition:all .15s}
+        button:active{transform:scale(.97)}button:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
         .btn-go{background:var(--text);color:var(--bg)}
         .btn-go:hover:not(:disabled){box-shadow:0 4px 24px rgba(250,250,250,.1)}
         .btn-go.run{background:var(--red);color:#fff;animation:btnP 1.5s ease-in-out infinite}
         @keyframes btnP{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.3)}50%{box-shadow:0 0 0 12px rgba(239,68,68,0)}}
-
-        /* Status */
         .status-bar{display:flex;justify-content:center;gap:48px;margin-top:28px;padding-top:20px;border-top:1px solid var(--border);animation:fadeUp .5s ease .3s both}
         .stat{text-align:center}
         .stat-label{font-size:.65rem;color:var(--text-3);letter-spacing:.15em;text-transform:uppercase;font-weight:500}
         .stat-value{font-family:var(--mono);font-size:.85rem;font-weight:500;color:var(--text-2);margin-top:4px}
-
-        /* Toast */
         #toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-120px);background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:14px 28px;border-radius:12px;font-size:.9rem;font-weight:500;z-index:2000;transition:transform .4s cubic-bezier(.16,1,.3,1);white-space:nowrap;max-width:90vw}
         #toast.vis{transform:translateX(-50%) translateY(0)}
-
         #confetti{position:fixed;inset:0;z-index:1500;pointer-events:none}
 
-        /* ═══ RESULT OVERLAY — FULLSCREEN, NO BLEED ═══ */
-        .ov{
-            display:none;position:fixed;inset:0;z-index:1400;
-            flex-direction:column;align-items:center;justify-content:center;
-            padding:32px 24px;
-            background:var(--bg); /* SOLID bg, no bleed */
-        }
+        /* ═══ OVERLAY ═══ */
+        .ov{display:none;position:fixed;inset:0;z-index:1400;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:var(--bg)}
         .ov.on{display:flex;animation:ovIn .4s ease}
         @keyframes ovIn{from{opacity:0}to{opacity:1}}
-
-        .ov-icon{font-size:6rem;margin-bottom:20px;animation:ovBounce .6s cubic-bezier(.34,1.56,.64,1)}
-        @keyframes ovBounce{0%{transform:scale(0) rotate(-10deg)}100%{transform:scale(1) rotate(0)}}
-        .ov-title{font-size:2.6rem;font-weight:800;letter-spacing:-.01em;margin-bottom:12px;line-height:1.1}
-        .ov-title.green{color:var(--green)}
-        .ov-title.amber{color:var(--amber)}
-        .ov-title.red{color:var(--red)}
+        .ov-icon{font-size:6rem;margin-bottom:20px;animation:ovB .6s cubic-bezier(.34,1.56,.64,1)}
+        @keyframes ovB{0%{transform:scale(0) rotate(-10deg)}100%{transform:scale(1) rotate(0)}}
+        .ov-title{font-size:2.6rem;font-weight:800;margin-bottom:12px;line-height:1.1}
+        .ov-title.green{color:var(--green)}.ov-title.amber{color:var(--amber)}.ov-title.red{color:var(--red)}
         .ov-time{font-family:var(--mono);font-size:1.8rem;font-weight:600;color:var(--text-2);margin-bottom:10px}
         .ov-sub{font-size:1rem;color:var(--text-3);margin-bottom:8px;line-height:1.6;max-width:340px;text-align:center}
-
-        .ov-promo{display:none;background:var(--amber-dim);border:1px solid rgba(245,158,11,.25);border-radius:14px;padding:18px 24px;margin:16px 0 8px;max-width:340px}
+        .ov-promo{display:none;border-radius:14px;padding:18px 24px;margin:16px 0 8px;max-width:340px;text-align:center}
         .ov-promo.on{display:block}
-        .ov-promo-text{font-size:.95rem;color:var(--amber);font-weight:500;line-height:1.5;text-align:center}
-
+        .ov-promo.gold{background:var(--amber-dim);border:1px solid rgba(245,158,11,.25)}
+        .ov-promo.subtle{background:rgba(250,250,250,.04);border:1px solid var(--border)}
+        .ov-promo-text{font-size:.95rem;font-weight:500;line-height:1.5}
+        .ov-promo.gold .ov-promo-text{color:var(--amber)}
+        .ov-promo.subtle .ov-promo-text{color:var(--text-2)}
         .ov-spacer{height:28px}
         .ov-btn{width:auto;min-width:220px;padding:16px 48px;border-radius:14px;font-weight:700;font-size:1.05rem;border:none;cursor:pointer;transition:all .15s}
-        .ov-btn.green{background:var(--green);color:#000}
-        .ov-btn.amber{background:var(--amber);color:#000}
-        .ov-btn.white{background:var(--text);color:var(--bg)}
+        .ov-btn.green{background:var(--green);color:#000}.ov-btn.amber{background:var(--amber);color:#000}.ov-btn.white{background:var(--text);color:var(--bg)}
         .ov-btn:hover{opacity:.9;transform:scale(.98)}
-
         .ov-brand{margin-top:32px;font-size:.6rem;color:var(--text-3);letter-spacing:.2em;text-transform:uppercase}
 
         /* Admin */
@@ -131,16 +90,14 @@
         .gen-box{display:flex;gap:10px;margin-bottom:10px}
         #genCount{width:80px;margin-bottom:0;padding:14px;font-size:.9rem}
         .btn-gen{flex:2;background:var(--text);color:var(--bg);padding:14px;font-size:.9rem}
-        .btn-dl{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,.2);margin-top:10px;padding:14px;font-size:.9rem}
+        .btn-dl{background:rgba(34,197,94,.08);color:var(--green);border:1px solid rgba(34,197,94,.2);margin-top:10px;padding:14px;font-size:.9rem}
         .tb-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow-x:auto}
         table{width:100%;border-collapse:collapse;font-size:.85rem}
         th{text-align:left;padding:14px 16px;color:var(--text-3);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;border-bottom:1px solid var(--border)}
         td{padding:14px 16px;font-family:var(--mono);font-size:.8rem;border-bottom:1px solid rgba(39,39,42,.5);color:var(--text-2)}
-
         .nav{position:fixed;bottom:0;width:100%;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:50}
         .nav-b{flex:1;padding:18px;text-align:center;color:var(--text-3);cursor:pointer;font-size:.8rem;font-weight:600;letter-spacing:.1em;transition:color .2s}
         .nav-b.act{color:var(--text)}
-
         @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
         @media(max-width:380px){.tmr{font-size:3.2rem}.ring-wrap{width:260px;height:260px}.ov-title{font-size:2rem}}
     </style>
@@ -149,21 +106,17 @@
     <div id="toast">Error</div>
     <canvas id="confetti"></canvas>
 
-    <!-- ═══ RESULT OVERLAY ═══ -->
     <div class="ov" id="resultOv">
         <div class="ov-icon" id="ovIcon">🎯</div>
         <div class="ov-title green" id="ovTitle">¡GANASTE!</div>
         <div class="ov-time" id="ovTime">10.00s</div>
-        <div class="ov-sub" id="ovSub">Tu resultado está en revisión</div>
-        <div class="ov-promo" id="ovPromo">
-            <div class="ov-promo-text" id="ovPromoText"></div>
-        </div>
+        <div class="ov-sub" id="ovSub"></div>
+        <div class="ov-promo gold" id="ovPromo"><div class="ov-promo-text" id="ovPromoText"></div></div>
         <div class="ov-spacer"></div>
         <button class="ov-btn green" id="ovBtn" onclick="closeResult()">Cerrar</button>
         <div class="ov-brand">VANTAGE Services</div>
     </div>
 
-    <!-- Calibration -->
     <div id="calScr" class="scr on">
         <div class="container">
             <div class="brand">VANTAGE Services</div>
@@ -173,14 +126,10 @@
         </div>
     </div>
 
-    <!-- Game -->
     <div id="gameScr" class="scr">
         <div class="container">
             <div class="brand">VANTAGE Services</div>
-            <div class="prize">
-                <div class="prize-dot"></div>
-                <span class="prize-text">$200 EN JUEGO</span>
-            </div>
+            <div class="prize"><div class="prize-dot"></div><span class="prize-text">$200 EN JUEGO</span></div>
             <div class="objective">Detén el reloj exactamente en <b>10.00 segundos</b></div>
             <div class="ring-wrap">
                 <svg class="ring-svg" viewBox="0 0 320 320">
@@ -204,7 +153,6 @@
         </div>
     </div>
 
-    <!-- Admin -->
     <div id="admScr" class="scr">
         <div class="container" style="max-width:600px;">
             <div id="admLogin">
@@ -214,20 +162,11 @@
                 <button class="btn-go" onclick="admAuth()">Acceder</button>
             </div>
             <div id="admBody" style="display:none;width:100%;">
-                <div class="adm-tools">
-                    <h3>Generar claves</h3>
-                    <div class="gen-box">
-                        <input type="number" id="genCount" value="10" min="1">
-                        <button class="btn-gen" onclick="generateKeys()">Generar</button>
-                    </div>
+                <div class="adm-tools"><h3>Generar claves</h3>
+                    <div class="gen-box"><input type="number" id="genCount" value="10" min="1"><button class="btn-gen" onclick="generateKeys()">Generar</button></div>
                     <button id="btnDl" class="btn-dl" style="display:none;" onclick="downloadKeys()">Descargar .TXT</button>
                 </div>
-                <div class="tb-wrap">
-                    <table>
-                        <thead><tr><th>Clave</th><th>Tiempo</th><th>Dif</th><th>Status</th></tr></thead>
-                        <tbody id="admTb"></tbody>
-                    </table>
-                </div>
+                <div class="tb-wrap"><table><thead><tr><th>Clave</th><th>Tiempo</th><th>Dif</th><th>Status</th></tr></thead><tbody id="admTb"></tbody></table></div>
             </div>
         </div>
     </div>
@@ -239,161 +178,96 @@
 
     <script>
     !function(){
-        var ring = document.getElementById('ringFill');
-        var tmr = document.getElementById('tmr');
-        var canvas = document.getElementById('confetti');
-        var ctx = canvas.getContext('2d');
-        var CIRC = 2 * Math.PI * 150; // r=150
-        ring.style.strokeDasharray = CIRC;
-        ring.style.strokeDashoffset = CIRC;
+        var ring=document.getElementById('ringFill'),tmr=document.getElementById('tmr'),canvas=document.getElementById('confetti'),ctx=canvas.getContext('2d');
+        var CIRC=2*Math.PI*150;
+        ring.style.strokeDasharray=CIRC;ring.style.strokeDashoffset=CIRC;
+        var processing=false,gameActive=false,ringAnim=null;
+        var audioCtx=null,oscNode=null,gainNode=null;
 
-        var processing=false, gameActive=false, ringAnim=null;
-        var audioCtx=null, oscNode=null, gainNode=null;
-
-        // Audio
-        function startTension(){
-            try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-            oscNode=audioCtx.createOscillator();gainNode=audioCtx.createGain();
-            oscNode.type='sine';oscNode.frequency.value=180;gainNode.gain.value=.04;
-            oscNode.connect(gainNode);gainNode.connect(audioCtx.destination);oscNode.start()}catch(e){}
-        }
+        function startTension(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();oscNode=audioCtx.createOscillator();gainNode=audioCtx.createGain();oscNode.type='sine';oscNode.frequency.value=180;gainNode.gain.value=.04;oscNode.connect(gainNode);gainNode.connect(audioCtx.destination);oscNode.start()}catch(e){}}
         function updateTension(s){if(!oscNode||!gainNode)return;try{var t=Math.min(s/10,1);oscNode.frequency.value=180+(t*t*420);gainNode.gain.value=Math.min(.04+(t*.08),.15)}catch(e){}}
         function stopTension(){try{if(oscNode){oscNode.stop();oscNode=null}gainNode=null}catch(e){}}
+        function playWin(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();[523,659,784,1047].forEach(function(f,i){var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=f;g.gain.value=.1;g.gain.setValueAtTime(.1,audioCtx.currentTime+i*.12);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+i*.12+.7);o.connect(g);g.connect(audioCtx.destination);o.start(audioCtx.currentTime+i*.12);o.stop(audioCtx.currentTime+i*.12+.7)})}catch(e){}}
+        function playClose(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();[440,554,659].forEach(function(f,i){var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=f;g.gain.value=.07;g.gain.setValueAtTime(.07,audioCtx.currentTime+i*.15);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+i*.15+.5);o.connect(g);g.connect(audioCtx.destination);o.start(audioCtx.currentTime+i*.15);o.stop(audioCtx.currentTime+i*.15+.5)})}catch(e){}}
+        function playLose(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sawtooth';o.frequency.value=150;g.gain.value=.06;g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.4);o.frequency.exponentialRampToValueAtTime(80,audioCtx.currentTime+.4);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.4)}catch(e){}}
 
-        function playWin(){
-            try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-            [523,659,784,1047].forEach(function(f,i){var o=audioCtx.createOscillator(),g=audioCtx.createGain();
-            o.type='sine';o.frequency.value=f;g.gain.value=.1;
-            g.gain.setValueAtTime(.1,audioCtx.currentTime+i*.12);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+i*.12+.7);
-            o.connect(g);g.connect(audioCtx.destination);o.start(audioCtx.currentTime+i*.12);o.stop(audioCtx.currentTime+i*.12+.7)})}catch(e){}
-        }
-        function playClose(){
-            try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-            [440,554,659].forEach(function(f,i){var o=audioCtx.createOscillator(),g=audioCtx.createGain();
-            o.type='sine';o.frequency.value=f;g.gain.value=.07;
-            g.gain.setValueAtTime(.07,audioCtx.currentTime+i*.15);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+i*.15+.5);
-            o.connect(g);g.connect(audioCtx.destination);o.start(audioCtx.currentTime+i*.15);o.stop(audioCtx.currentTime+i*.15+.5)})}catch(e){}
-        }
-        function playLose(){
-            try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-            var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sawtooth';o.frequency.value=150;g.gain.value=.06;
-            g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.4);o.frequency.exponentialRampToValueAtTime(80,audioCtx.currentTime+.4);
-            o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.4)}catch(e){}
-        }
-
-        // Ring
         function startRing(){gameActive=true;ring.classList.remove('near','over','win','close');ring.classList.add('active');startTension();tickRing()}
-        function tickRing(){
-            if(!gameActive)return;
-            var txt=tmr.textContent||'00.00',p=txt.split('.');
-            var total=(parseInt(p[0])||0)+(parseInt(p[1])||0)/100;
-            ring.style.strokeDashoffset=CIRC-(Math.min(total/14,1)*CIRC);
-            ring.classList.remove('near','over');
-            if(total>=8.5&&total<=11.5)ring.classList.add('near');
-            if(total>11.5)ring.classList.add('over');
-            updateTension(total);
-            ringAnim=requestAnimationFrame(tickRing);
-        }
+        function tickRing(){if(!gameActive)return;var txt=tmr.textContent||'00.00',p=txt.split('.');var total=(parseInt(p[0])||0)+(parseInt(p[1])||0)/100;ring.style.strokeDashoffset=CIRC-(Math.min(total/14,1)*CIRC);ring.classList.remove('near','over');if(total>=8.5&&total<=11.5)ring.classList.add('near');if(total>11.5)ring.classList.add('over');updateTension(total);ringAnim=requestAnimationFrame(tickRing)}
         function stopRing(r){gameActive=false;if(ringAnim){cancelAnimationFrame(ringAnim);ringAnim=null}stopTension();ring.classList.remove('active','near','over','win','close');if(r)ring.classList.add(r)}
         function resetRing(){ring.style.strokeDashoffset=CIRC;ring.classList.remove('active','near','over','win','close')}
 
-        // Confetti — LONG LASTING
         var particles=[],confettiOn=false;
         function resizeC(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
         window.addEventListener('resize',resizeC);resizeC();
-
-        function fireConfetti(intensity){
+        function fireConfetti(type){
             particles=[];
-            var colors=intensity==='big'?['#22c55e','#4ade80','#86efac','#fafafa','#f59e0b','#fbbf24']:['#f59e0b','#fbbf24','#facc15','#fcd34d','#fafafa'];
-            var count=intensity==='big'?200:120;
-            var bursts=intensity==='big'?5:3;
-            for(var b=0;b<bursts;b++){
-                var cx=canvas.width*(0.1+b*(0.8/(bursts-1)));
-                for(var i=0;i<count/bursts;i++){
-                    particles.push({
-                        x:cx+(Math.random()-.5)*100,y:canvas.height*.3,
-                        vx:(Math.random()-.5)*20,vy:-Math.random()*22-6,
-                        w:Math.random()*12+4,h:Math.random()*8+3,
-                        color:colors[Math.floor(Math.random()*colors.length)],
-                        rot:Math.random()*360,rv:(Math.random()-.5)*14,
-                        g:.18+Math.random()*.08,life:1,
-                        decay:.0015+Math.random()*.0015 // Very slow = ~5-7 seconds
-                    });
-                }
-            }
+            var colors=type==='big'?['#22c55e','#4ade80','#86efac','#fafafa','#f59e0b','#fbbf24']:['#f59e0b','#fbbf24','#facc15','#fcd34d','#fafafa'];
+            var count=type==='big'?200:120;var bursts=type==='big'?5:3;
+            for(var b=0;b<bursts;b++){var cx=canvas.width*(.1+b*(.8/(bursts-1)));
+            for(var i=0;i<count/bursts;i++){particles.push({x:cx+(Math.random()-.5)*100,y:canvas.height*.3,vx:(Math.random()-.5)*20,vy:-Math.random()*22-6,w:Math.random()*12+4,h:Math.random()*8+3,color:colors[Math.floor(Math.random()*colors.length)],rot:Math.random()*360,rv:(Math.random()-.5)*14,g:.18+Math.random()*.08,life:1,decay:.0015+Math.random()*.0015})}}
             confettiOn=true;animC();
         }
-        function animC(){
-            if(!confettiOn)return;
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            var alive=false;
-            for(var i=0;i<particles.length;i++){
-                var p=particles[i];if(p.life<=0)continue;alive=true;
-                p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.vx*=.99;p.rot+=p.rv;p.life-=p.decay;
-                ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
-                ctx.globalAlpha=Math.min(p.life*1.5,1);ctx.fillStyle=p.color;
-                ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();
-            }
-            if(alive)requestAnimationFrame(animC);
-            else{confettiOn=false;ctx.clearRect(0,0,canvas.width,canvas.height)}
-        }
+        function animC(){if(!confettiOn)return;ctx.clearRect(0,0,canvas.width,canvas.height);var alive=false;for(var i=0;i<particles.length;i++){var p=particles[i];if(p.life<=0)continue;alive=true;p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.vx*=.99;p.rot+=p.rv;p.life-=p.decay;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.globalAlpha=Math.min(p.life*1.5,1);ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore()}if(alive)requestAnimationFrame(animC);else{confettiOn=false;ctx.clearRect(0,0,canvas.width,canvas.height)}}
 
-        // Overlay
         window.closeResult=function(){document.getElementById('resultOv').classList.remove('on')};
 
+        // ══════════════════════════════════════════════════
+        // 4 NIVELES DE RESULTADO
+        // ══════════════════════════════════════════════════
         function showOverlay(type, timeText, diff){
-            var icon=document.getElementById('ovIcon');
-            var title=document.getElementById('ovTitle');
-            var time=document.getElementById('ovTime');
-            var sub=document.getElementById('ovSub');
-            var promo=document.getElementById('ovPromo');
-            var promoText=document.getElementById('ovPromoText');
-            var btn=document.getElementById('ovBtn');
+            var icon=document.getElementById('ovIcon'),title=document.getElementById('ovTitle'),
+                time=document.getElementById('ovTime'),sub=document.getElementById('ovSub'),
+                promo=document.getElementById('ovPromo'),promoText=document.getElementById('ovPromoText'),
+                btn=document.getElementById('ovBtn');
 
             time.textContent=timeText+'s';
+            promo.classList.remove('on','gold','subtle');
 
             if(type==='exact'){
+                // ═══ GANASTE — exacto 10.00 ═══
                 icon.textContent='🎯';
                 title.textContent='¡GANASTE!';
                 title.className='ov-title green';
                 sub.textContent='Tu resultado está en revisión';
-                promo.classList.remove('on');
-                btn.className='ov-btn green';
-                btn.textContent='Cerrar';
-            }else if(type==='close'){
+                btn.className='ov-btn green'; btn.textContent='Cerrar';
+            }
+            else if(type==='close'){
+                // ═══ MUY CERCA — dentro de ±500ms ═══
                 icon.textContent='🔥';
                 title.textContent='¡Estuviste MUY cerca!';
                 title.className='ov-title amber';
-                sub.textContent='Tu tiempo: '+timeText+'s';
-                promo.classList.add('on');
+                sub.textContent='Diferencia: '+diff+'ms';
+                promo.classList.add('on','gold');
                 promoText.textContent='✨ Pregunta por tu promoción especial — este resultado podría tener premio';
-                btn.className='ov-btn amber';
-                btn.textContent='Cerrar';
-            }else if(type==='timeout'){
+                btn.className='ov-btn amber'; btn.textContent='Cerrar';
+            }
+            else if(type==='timeout'){
+                // ═══ TIEMPO AGOTADO ═══
                 icon.textContent='⏰';
                 title.textContent='Tiempo agotado';
                 title.className='ov-title red';
                 sub.textContent='Se pasó del límite de tiempo';
-                promo.classList.remove('on');
-                btn.className='ov-btn white';
-                btn.textContent='Intentar de nuevo';
-            }else{
-                icon.textContent=diff<200?'🔥':'⏱';
-                title.textContent=diff<200?'¡Casi!':'No esta vez';
+                promo.classList.add('on','subtle');
+                promoText.textContent='💬 Pregunta por nuestros descuentos y promociones disponibles';
+                btn.className='ov-btn white'; btn.textContent='Intentar de nuevo';
+            }
+            else {
+                // ═══ PERDISTE — fuera de rango ═══
+                icon.textContent='⏱';
+                title.textContent='No esta vez';
                 title.className='ov-title red';
                 sub.textContent='Diferencia: '+diff+'ms';
-                promo.classList.remove('on');
-                btn.className='ov-btn white';
-                btn.textContent='Intentar de nuevo';
+                promo.classList.add('on','subtle');
+                promoText.textContent='💬 Pregunta por nuestros descuentos y promociones disponibles';
+                btn.className='ov-btn white'; btn.textContent='Intentar de nuevo';
             }
             document.getElementById('resultOv').classList.add('on');
         }
 
         // ══════════════════════════════════════════════════
-        // OBSERVER — reads data attributes from script.js
+        // OBSERVER — reads SERVER diff from data attributes
         // ══════════════════════════════════════════════════
         var lastState='';
-
         new MutationObserver(function(){
             if(processing)return;
             var cl=tmr.classList;
@@ -403,55 +277,54 @@
             else if(cl.contains('run'))cur='run';
             else cur='idle';
             if(cur===lastState)return;
-            lastState=cur;
-            processing=true;
+            lastState=cur; processing=true;
 
-            if(cur==='run'&&!gameActive){
-                startRing();
-            }
+            if(cur==='run'&&!gameActive){ startRing(); }
             else if(cur==='win'){
-                // ═══ READ SERVER DATA ═══
+                // Server said isWinner=true
                 var diff=parseInt(tmr.dataset.diff)||0;
                 var timeText=tmr.textContent||'00.00';
                 var isExact=(timeText==='10.00');
 
                 if(isExact){
-                    // EXACT 10.00 — full win
-                    stopRing('win');
-                    playWin();
-                    fireConfetti('big');
+                    stopRing('win'); playWin(); fireConfetti('big');
                     setTimeout(function(){showOverlay('exact',timeText,diff)},500);
                 } else {
-                    // Within tolerance but not exact display — CLOSE
-                    stopRing('close');
-                    playClose();
-                    fireConfetti('medium');
+                    // Won but display isn't 10.00 — close win
+                    stopRing('close'); playClose(); fireConfetti('medium');
                     setTimeout(function(){showOverlay('close',timeText,diff)},500);
                 }
             }
             else if(cur==='lose'){
-                stopRing(false);
-                playLose();
+                stopRing(false); playLose();
                 tmr.classList.add('shake');
                 setTimeout(function(){processing=true;tmr.classList.remove('shake');processing=false},500);
 
-                var timeText=tmr.textContent||'00.00';
                 var diff=parseInt(tmr.dataset.diff)||0;
                 var wasAuto=tmr.dataset.auto==='true';
                 var elapsed=parseInt(tmr.dataset.elapsed)||0;
+                var timeText=tmr.textContent||'00.00';
                 var wasTimeout=wasAuto||elapsed>14000;
 
-                setTimeout(function(){showOverlay(wasTimeout?'timeout':'lose',timeText,diff)},700);
+                // ═══ KEY LOGIC: ±500ms = "close", else = "lose" ═══
+                var isClose=(!wasTimeout && diff<=500);
+
+                if(wasTimeout){
+                    setTimeout(function(){showOverlay('timeout',timeText,diff)},700);
+                } else if(isClose){
+                    // Within 500ms but server said not winner — show "close" with promo
+                    fireConfetti('medium');
+                    setTimeout(function(){showOverlay('close',timeText,diff)},700);
+                } else {
+                    setTimeout(function(){showOverlay('lose',timeText,diff)},700);
+                }
             }
-            else if(cur==='idle'){
-                stopRing(false);resetRing();
-            }
+            else if(cur==='idle'){ stopRing(false); resetRing(); }
 
             processing=false;
         }).observe(tmr,{attributes:true,attributeFilter:['class']});
     }();
     </script>
-
     <script src="/script.js"></script>
 </body>
 </html>
