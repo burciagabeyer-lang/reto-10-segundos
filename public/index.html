@@ -236,7 +236,7 @@
     <div id="gameScr" class="scr">
         <div class="container">
             <div class="brand">VANTAGE Services</div>
-            <div class="prize"><div class="prize-dot"></div><span class="prize-text">$200 EN JUEGO</span></div>
+            <div class="prize"><div class="prize-dot"></div><span class="prize-text">TU INVERSIÓN EN JUEGO</span></div>
             <div class="objective">Detén el reloj exactamente en <b>10.00 segundos</b></div>
             <div class="ring-wrap">
                 <svg class="ring-svg" viewBox="0 0 320 320">
@@ -255,7 +255,7 @@
             <button id="btn" class="btn-go" onclick="handleBtn(event)">INICIAR RETO</button>
             <div class="status-bar">
                 <div class="stat"><div class="stat-label">Objetivo</div><div class="stat-value">10.00s</div></div>
-                <div class="stat"><div class="stat-label">Premio</div><div class="stat-value" style="color:var(--amber)">$200</div></div>
+                <div class="stat"><div class="stat-label">Beneficio</div><div class="stat-value" style="color:var(--amber)">Reembolso + Mes gratis</div></div>
             </div>
         </div>
     </div>
@@ -329,7 +329,7 @@
             var icon=document.getElementById('ovIcon'),title=document.getElementById('ovTitle'),time=document.getElementById('ovTime'),sub=document.getElementById('ovSub'),promo=document.getElementById('ovPromo'),promoText=document.getElementById('ovPromoText'),btn=document.getElementById('ovBtn');
             time.textContent=timeText+'s';promo.classList.remove('on','gold','subtle');
             if(type==='exact'){icon.textContent='🎯';title.textContent='¡GANASTE!';title.className='ov-title green';sub.textContent='Tu resultado está en revisión';btn.className='ov-btn green';btn.textContent='Cerrar'}
-            else if(type==='close'){icon.textContent='🔥';title.textContent='¡Estuviste MUY cerca!';title.className='ov-title amber';sub.textContent='Diferencia: '+diff+'ms';promo.classList.add('on','gold');promoText.textContent='✨ Pregunta por tu promoción especial — este resultado podría tener premio';btn.className='ov-btn amber';btn.textContent='Cerrar'}
+            else if(type==='close'){icon.textContent='🔥';title.textContent='¡Estuviste MUY cerca!';title.className='ov-title amber';sub.textContent='Diferencia: '+diff+'ms';promo.classList.add('on','gold');promoText.textContent='✨ Pregunta por tu beneficio especial — este resultado podría calificar';btn.className='ov-btn amber';btn.textContent='Cerrar'}
             else if(type==='timeout'){icon.textContent='⏰';title.textContent='Tiempo agotado';title.className='ov-title red';sub.textContent='Se pasó del límite de tiempo';promo.classList.add('on','subtle');promoText.textContent='💬 Pregunta por nuestros descuentos y promociones';btn.className='ov-btn white';btn.textContent='Intentar de nuevo'}
             else{icon.textContent=diff<300?'😬':'⏱';title.textContent=diff<300?'Buen intento':'No esta vez';title.className='ov-title red';sub.textContent='Diferencia: '+diff+'ms';promo.classList.add('on','subtle');promoText.textContent='💬 Pregunta por nuestros descuentos y promociones';btn.className='ov-btn white';btn.textContent='Intentar de nuevo'}
             document.getElementById('resultOv').classList.add('on');
